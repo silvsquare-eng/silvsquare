@@ -10,6 +10,11 @@
     "preview": "astro preview",
     "sync": "node scripts/sync.js"
   },
+  "overrides": {
+    "@astrojs/tailwind": {
+      "astro": "$astro"
+    }
+  },
   "dependencies": {
     "@astrojs/check": "^0.9.10",
     "@astrojs/react": "^6.0.2",
