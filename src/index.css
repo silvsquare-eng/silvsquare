@@ -1,0 +1,139 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 30 14% 96%;
+    --foreground: 24 18% 8%;
+    --card: 0 0% 100%;
+    --card-foreground: 24 18% 8%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 24 18% 8%;
+    --primary: 25 85% 49%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 25 26% 55%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 30 14% 96%;
+    --muted-foreground: 24 10% 50%;
+    --accent: 30 33% 93%;
+    --accent-foreground: 24 18% 8%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 24 18% 8%;
+    --input: 24 18% 8%;
+    --ring: 25 85% 49%;
+    --radius: 0.625rem;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-sand text-primary-dark font-sans antialiased;
+    direction: rtl;
+    text-align: right;
+  }
+
+  * {
+    @apply border-border/10;
+  }
+}
+
+@layer components {
+  .section-padding {
+    @apply py-20 px-5 md:py-[120px] md:px-10;
+  }
+
+  .content-max-width {
+    @apply max-w-[1200px] mx-auto;
+  }
+
+  .text-display {
+    font-size: clamp(2.25rem, 5vw, 4.5rem);
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+  }
+
+  .text-h2 {
+    font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  .text-h3 {
+    font-size: clamp(1.25rem, 2vw, 1.5rem);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+  }
+
+  .text-subtitle {
+    font-size: clamp(1rem, 1.5vw, 1.125rem);
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  .text-body {
+    font-size: clamp(0.875rem, 1.2vw, 1rem);
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    line-height: 1.75;
+  }
+
+  .text-caption {
+    font-size: clamp(0.75rem, 1vw, 0.875rem);
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    line-height: 1.6;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center bg-primary-accent text-white font-semibold py-3.5 px-8 rounded-button transition-all duration-300 ease-out;
+  }
+
+  .btn-primary:hover {
+    @apply bg-primary-accent-hover;
+    box-shadow: 0 4px 16px rgba(232,96,17,0.25);
+    transform: translateY(-1px);
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center bg-transparent border-2 border-primary-accent text-primary-accent font-semibold py-3 px-7 rounded-button transition-all duration-300 ease-out;
+  }
+
+  .btn-secondary:hover {
+    @apply bg-primary-accent text-white;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center bg-transparent border border-warm-dark text-warm-dark font-medium py-2.5 px-6 rounded-button transition-all duration-300 ease-out;
+  }
+
+  .btn-ghost:hover {
+    @apply bg-warm-dark text-white;
+  }
+
+  .card-base {
+    @apply bg-white rounded-card shadow-card border border-primary-dark/[0.04] transition-all duration-500;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .card-base:hover {
+    @apply shadow-card-hover;
+    transform: translateY(-4px);
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}

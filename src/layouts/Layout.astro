@@ -1,0 +1,60 @@
+---
+import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
+import { WhatsAppFAB } from '@/components/WhatsAppFAB';
+import { ContactModal } from '@/components/ContactModal';
+import '@/index.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+}
+
+const { 
+  title = "SilvSquare | تغليف مطاعم وكافيهات — من التصميم إلى باب الفرع", 
+  description = "مصنع سعودي في الخبر متخصص في تغليف المطاعم والكافيهات. تصميم وطباعة أكواب ورقية وبلاستيكية، أكياس قهوة، بوكسات طعام، ورق ساندوتش، وستيكرات. تسليم لجميع مدن السعودية.",
+  ogImage
+} = Astro.props;
+
+const currentPath = Astro.url.pathname;
+---
+
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description}>
+    <meta name="keywords" content="تغليف مطاعم, تغليف كافيهات, طباعة أكواب ورقية, أكياس قهوة, بوكسات طعام, ورق ساندوتش, ستيكرات مطاعم, مصنع تغليف السعودية, الخبر">
+    <meta property="og:title" content={title}>
+    <meta property="og:description" content={description}>
+    <meta property="og:type" content="website">
+    <meta property="og:url" content={Astro.url.href}>
+    <meta property="og:locale" content="ar_SA">
+    {ogImage && <meta property="og:image" content={ogImage}>}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <div class="min-h-[100dvh]" dir="rtl">
+      <Header currentPath={currentPath} client:load />
+      <main>
+        <slot />
+      </main>
+      <Footer client:idle />
+      <WhatsAppFAB client:idle />
+      <ContactModal client:load />
+    </div>
+    
+    <script is:inline>
+      const params = new URLSearchParams(window.location.search);
+      const rep = params.get('rep');
+      if (rep) {
+        localStorage.setItem('sales_rep', rep);
+      }
+    </script>
+  </body>
+</html>

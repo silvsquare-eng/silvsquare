@@ -1,0 +1,9 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import { CatalogPage } from '@/components/CatalogPage';
+import catalogData from '@/data/catalog.json';
+---
+
+<Layout title="SilvSquare | كتالوج المنتجات" description="تصفح مجموعة منتجاتنا المتنوعة واطلب مباشرة عبر الواتساب.">
+  <CatalogPage products={catalogData} client:load />
+</Layout>
