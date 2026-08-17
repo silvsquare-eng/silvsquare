@@ -69,11 +69,15 @@ export function ProductDetailsPage({ product }: { product: DetailedProduct }) {
       repId = localStorage.getItem('sales_rep');
     }
     const phoneNumber = getRepNumber(repId);
+    const imageUrl = getColorImage();
 
     let msg = `السلام عليكم، أريد طلب:\n${productUrl}\n\n`;
     msg += `📦 المنتج: ${dynamicName}\n`;
-    msg += `🏷️ رمز المنتج (SKU): ${dynamicSku}\n\n`;
-    msg += `التفاصيل:\n`;
+    msg += `🏷️ رمز المنتج (SKU): ${dynamicSku}\n`;
+    if (imageUrl) {
+      msg += `🖼️ صورة المنتج: ${imageUrl}\n`;
+    }
+    msg += `\nالتفاصيل:\n`;
     Object.entries(selectedOptions).forEach(([key, value]) => {
       msg += `- ${key}: ${value}\n`;
     });
@@ -209,7 +213,7 @@ export function ProductDetailsPage({ product }: { product: DetailedProduct }) {
             {/* Contact Action */}
             <div className="mt-auto pt-6 border-t border-neutral-100">
               <a href={buildWhatsAppLink()} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#1EBE5D] text-white py-3 px-4 rounded-xl text-lg font-bold transition-colors w-full">
-                <MessageCircle className="w-5 h-5" /> طلب تسعيرة عبر الواتساب
+                <MessageCircle className="w-5 h-5" /> طلب تسعيرة
               </a>
             </div>
 
