@@ -113,7 +113,7 @@ export function HeroSection() {
 
           {/* Benefits */}
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-10">
-            {SITE_CONFIG.hero.benefits.map((benefit, i) => (
+            {SITE_CONFIG.hero.benefits.map((benefit: any, i: number) => (
               <div key={i} className="benefit-item flex items-center gap-2 opacity-0">
                 <Check className="w-4 h-4 text-primary-accent flex-shrink-0" />
                 <span className="text-body text-white/85">{benefit}</span>

@@ -134,6 +134,9 @@ async function main() {
   console.log('🔄 جاري سحب البيانات من Google Sheets...');
   
   try {
+    const dataDir = path.join(__dirname, '../src/data');
+    await fs.mkdir(dataDir, { recursive: true });
+
     const settingsCsv = await fetchCSV(SETTINGS_CSV_URL);
     if (settingsCsv) {
       await syncSettings(settingsCsv);

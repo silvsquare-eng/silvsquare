@@ -4,7 +4,7 @@ import { ProductDetailsPage } from '@/components/ProductDetailsPage';
 import catalogData from '@/data/catalog.json';
 
 export async function getStaticPaths() {
-  return catalogData.map((product) => ({
+  return catalogData.map((product: any) => ({
     params: { id: product.id },
     props: { product },
   }));

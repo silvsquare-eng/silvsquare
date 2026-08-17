@@ -55,7 +55,7 @@ export function StatsSection() {
           ref={gridRef}
           className="grid grid-cols-2 lg:grid-cols-4 gap-8 mt-12"
         >
-          {SITE_CONFIG.stats.map((stat, index) => (
+          {SITE_CONFIG.stats.map((stat: any, index: number) => (
             <div
               key={index}
               className={`text-center transition-all duration-700 ${
