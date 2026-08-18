@@ -11,6 +11,7 @@ const __dirname = path.dirname(__filename);
 // الإعدادات: ضع روابط CSV الخاصة بجوجل شيت هنا
 // ==========================================
 const CATALOG_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ3nOxONI26mhYcT5JYn4kLPK1ALccqO-eJDYet9DiQ-8n8Ya6uvh_WDXtevzAI3MozD1nv6rH_7LYo/pub?gid=1624564332&single=true&output=csv"; 
+const CATALOG_EN_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ3nOxONI26mhYcT5JYn4kLPK1ALccqO-eJDYet9DiQ-8n8Ya6uvh_WDXtevzAI3MozD1nv6rH_7LYo/pub?gid=2001&single=true&output=csv";
 const SETTINGS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ3nOxONI26mhYcT5JYn4kLPK1ALccqO-eJDYet9DiQ-8n8Ya6uvh_WDXtevzAI3MozD1nv6rH_7LYo/pub?gid=2037700393&single=true&output=csv";
 
 async function fetchCSV(url) {
@@ -48,9 +49,10 @@ function setNested(obj, pathStr, value) {
   current[keys[keys.length - 1]] = parsedValue;
 }
 
-async function syncCatalog(csvData) {
+async function syncCatalog(csvData, csvDataEn) {
   if (!csvData) return;
   const records = parse(csvData, { columns: true, skip_empty_lines: true });
+  const recordsEn = csvDataEn ? parse(csvDataEn, { columns: true, skip_empty_lines: true }) : [];
   
   // نقوم بتحميل الملف الحالي للحفاظ على التقييمات (Reviews)
   const existingPath = path.join(__dirname, '../src/data/catalog.json');
@@ -75,20 +77,19 @@ async function syncCatalog(csvData) {
   
   const catalog = records.map(row => {
     const existing = existingCatalog.find(p => p.id === row.id) || {};
+    const enRow = recordsEn.find(p => p.id === row.id) || {};
     
     const options = {};
     const options_en = {};
     const extraImages = [];
     const optionImages = {};
     
+    // Process Arabic / Default Row
     for (const key of Object.keys(row)) {
-      // Support dynamic image columns like image_1, image_2, or صورة_1
       if (key.startsWith('image_') || key.startsWith('صورة_')) {
         const val = row[key] ? row[key].trim() : '';
         if (val !== '') {
           extraImages.push(val);
-          
-          // Map column name to option if it's not just a number. e.g. "صورة_أحمر" -> "أحمر"
           const suffix = key.replace(/^(image_|صورة_)/, '').trim();
           if (isNaN(Number(suffix)) && suffix !== '') {
             optionImages[suffix] = val;
@@ -104,6 +105,14 @@ async function syncCatalog(csvData) {
         }
       }
     }
+
+    // Process English Row Options (Overrides any _en columns in Arabic sheet)
+    for (const key of Object.keys(enRow)) {
+      if (!key.startsWith('image_') && !key.startsWith('صورة_') && !standardFields.includes(key) && key.trim() !== '') {
+        const val = enRow[key];
+        options_en[key] = val ? val.split(/[,،]/).map(s => s.trim()).filter(Boolean) : [];
+      }
+    }
     
     let allAdditionalImages = row.additional_images ? row.additional_images.split(',').map(s => s.trim()).filter(Boolean) : [];
     allAdditionalImages = [...allAdditionalImages, ...extraImages];
@@ -111,11 +120,11 @@ async function syncCatalog(csvData) {
     return {
       id: row.id,
       name: row.name,
-      name_en: row.name_en || row.name,
+      name_en: enRow.name || row.name_en || row.name,
       category: row.category,
-      category_en: row.category_en || row.category,
+      category_en: enRow.category || row.category_en || row.category,
       description: row.description,
-      description_en: row.description_en || row.description,
+      description_en: enRow.description || row.description_en || row.description,
       base_price: row.base_price || "",
       main_image: row.main_image,
       model_3d: row.model_3d || undefined,
@@ -173,8 +182,9 @@ async function main() {
     }
 
     const catalogCsv = await fetchCSV(CATALOG_CSV_URL);
+    const catalogEnCsv = await fetchCSV(CATALOG_EN_CSV_URL);
     if (catalogCsv) {
-      await syncCatalog(catalogCsv);
+      await syncCatalog(catalogCsv, catalogEnCsv);
     } else {
       console.log('⚠️ تم تخطي الكتالوج، يرجى وضع رابط CATALOG_CSV_URL في السكريبت.');
     }
