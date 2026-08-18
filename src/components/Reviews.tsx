@@ -13,9 +13,10 @@ interface ReviewsProps {
   productId: string;
   initialReviews: Review[];
   initialRating: number;
+  lang?: "ar" | "en";
 }
 
-export function Reviews({ productId, initialReviews, initialRating }: ReviewsProps) {
+export function Reviews({ productId, initialReviews, initialRating, lang = "ar" }: ReviewsProps) {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [newAuthor, setNewAuthor] = useState('');
   const [newText, setNewText] = useState('');
@@ -56,10 +57,18 @@ export function Reviews({ productId, initialReviews, initialRating }: ReviewsPro
     ? (reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length).toFixed(1)
     : initialRating;
 
+  const title = lang === "en" ? "Reviews & Feedback" : "التقييمات والآراء";
+  const noReviewsText = lang === "en" ? "No reviews yet. Be the first to share your opinion!" : "لا توجد تقييمات حتى الآن. كن أول من يشاركنا رأيه!";
+  const addReviewTitle = lang === "en" ? "Add Your Review" : "أضف تقييمك";
+  const nameLabel = lang === "en" ? "Name:" : "الاسم:";
+  const ratingLabel = lang === "en" ? "Rating:" : "التقييم:";
+  const commentLabel = lang === "en" ? "Comment:" : "تعليقك:";
+  const submitBtn = lang === "en" ? "Submit Review" : "إرسال التقييم";
+
   return (
     <div className="bg-white rounded-3xl p-6 shadow-sm border border-neutral-100">
       <div className="flex items-center gap-4 mb-8">
-        <h2 className="text-2xl font-bold text-primary-dark">التقييمات والآراء</h2>
+        <h2 className="text-2xl font-bold text-primary-dark">{title}</h2>
         <div className="flex items-center gap-1 bg-neutral-100 px-3 py-1 rounded-lg">
           <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
           <span className="font-bold text-lg">{avgRating}</span>
@@ -72,7 +81,7 @@ export function Reviews({ productId, initialReviews, initialRating }: ReviewsPro
         {/* Review List */}
         <div className="lg:col-span-2 space-y-6">
           {reviews.length === 0 ? (
-            <p className="text-neutral-500">لا توجد تقييمات حتى الآن. كن أول من يشاركنا رأيه!</p>
+            <p className="text-neutral-500">{noReviewsText}</p>
           ) : (
             reviews.map(review => (
               <div key={review.id} className="border-b border-neutral-100 pb-6 last:border-0">
@@ -88,7 +97,7 @@ export function Reviews({ productId, initialReviews, initialRating }: ReviewsPro
                     />
                   ))}
                 </div>
-                <p className="text-sm text-neutral-600 leading-relaxed">{review.text}</p>
+                <p className="text-sm text-neutral-600 leading-relaxed" dir={lang === 'en' ? 'ltr' : 'rtl'}>{review.text}</p>
               </div>
             ))
           )}
@@ -96,44 +105,56 @@ export function Reviews({ productId, initialReviews, initialRating }: ReviewsPro
 
         {/* Add Review Form */}
         <div className="bg-neutral-50 p-6 rounded-2xl h-fit">
-          <h3 className="font-semibold text-primary-dark mb-4">أضف تقييمك</h3>
+          <h3 className="font-semibold text-primary-dark mb-4">{addReviewTitle}</h3>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-medium text-neutral-600 mb-1">الاسم:</label>
+              <label className="block text-xs font-medium text-neutral-600 mb-1">{nameLabel}</label>
               <input 
                 type="text" 
                 required
                 value={newAuthor}
                 onChange={(e) => setNewAuthor(e.target.value)}
-                className="w-full bg-white border border-neutral-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary-accent" 
+                className={`w-full bg-white border border-neutral-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary-accent ${lang === 'en' ? 'text-left' : 'text-right'}`}
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-neutral-600 mb-1">التقييم:</label>
+              <label className="block text-xs font-medium text-neutral-600 mb-1">{ratingLabel}</label>
               <select 
                 value={newRating}
                 onChange={(e) => setNewRating(Number(e.target.value))}
-                className="w-full bg-white border border-neutral-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary-accent"
+                className={`w-full bg-white border border-neutral-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary-accent ${lang === 'en' ? 'text-left' : 'text-right'}`}
               >
-                <option value="5">5 نجوم - ممتاز</option>
-                <option value="4">4 نجوم - جيد جداً</option>
-                <option value="3">3 نجوم - جيد</option>
-                <option value="2">نجمتين - مقبول</option>
-                <option value="1">نجمة واحدة - ضعيف</option>
+                {lang === "en" ? (
+                  <>
+                    <option value="5">5 Stars - Excellent</option>
+                    <option value="4">4 Stars - Very Good</option>
+                    <option value="3">3 Stars - Good</option>
+                    <option value="2">2 Stars - Fair</option>
+                    <option value="1">1 Star - Poor</option>
+                  </>
+                ) : (
+                  <>
+                    <option value="5">5 نجوم - ممتاز</option>
+                    <option value="4">4 نجوم - جيد جداً</option>
+                    <option value="3">3 نجوم - جيد</option>
+                    <option value="2">نجمتين - مقبول</option>
+                    <option value="1">نجمة واحدة - ضعيف</option>
+                  </>
+                )}
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-neutral-600 mb-1">تعليقك:</label>
+              <label className="block text-xs font-medium text-neutral-600 mb-1">{commentLabel}</label>
               <textarea 
                 required
                 rows={3}
                 value={newText}
                 onChange={(e) => setNewText(e.target.value)}
-                className="w-full bg-white border border-neutral-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary-accent resize-none" 
+                className={`w-full bg-white border border-neutral-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary-accent resize-none ${lang === 'en' ? 'text-left' : 'text-right'}`}
               />
             </div>
             <button type="submit" className="w-full btn-primary py-2.5 text-sm">
-              إرسال التقييم
+              {submitBtn}
             </button>
           </form>
         </div>

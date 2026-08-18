@@ -1,0 +1,23 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import { ProductDetailsPage } from '@/components/ProductDetailsPage';
+import catalogData from '@/data/catalog.json';
+
+export async function getStaticPaths() {
+  return catalogData.map((product: any) => ({
+    params: { id: product.id },
+    props: { product },
+  }));
+}
+
+const { product } = Astro.props;
+---
+
+<Layout 
+  lang="en"
+  title={`Silver Square | ${product.name_en || product.name}`} 
+  description={product.description_en || product.description}
+  ogImage={product.main_image}
+>
+  <ProductDetailsPage product={product} lang="en" client:load />
+</Layout>

@@ -1,0 +1,9 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import { CatalogPage } from '@/components/CatalogPage';
+import catalogData from '@/data/catalog.json';
+---
+
+<Layout lang="en" title="Silver Square | Product Catalog" description="Browse our diverse product collection and order directly via WhatsApp.">
+  <CatalogPage products={catalogData as any} lang="en" client:load />
+</Layout>

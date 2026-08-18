@@ -13,7 +13,7 @@ interface FormData {
   phone: string;
 }
 
-export function ContactModal() {
+export function ContactModal({ lang = 'ar' }: { lang?: 'ar' | 'en' }) {
   const { isOpen, closeModal } = useModal();
   const overlayRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
@@ -89,9 +89,32 @@ export function ContactModal() {
   const inputClass = (field: keyof FormData) =>
     `w-full bg-sand border rounded-input px-4 py-3 text-body transition-all duration-300 focus:outline-none focus:border-primary-accent focus:ring-2 focus:ring-primary-accent/10 ${
       errors[field] ? 'border-red-400' : 'border-primary-dark/[0.08]'
-    }`;
+    } ${lang === 'en' ? 'text-left' : 'text-right'}`;
 
   if (!isOpen) return null;
+
+  const t = {
+    title: lang === 'en' ? (SITE_CONFIG.ui_en?.request_quote_button || 'Request Packaging Quote') : (SITE_CONFIG.ui?.request_quote_button || 'اطلب تسعيرة تغليف مطعمك'),
+    subtitle: lang === 'en' ? 'We reply within 24 hours' : 'نرد عليك خلال 24 ساعة',
+    restaurantName: lang === 'en' ? 'Restaurant/Business Name *' : 'اسم المطعم أو المشروع *',
+    restaurantNamePlaceholder: lang === 'en' ? 'e.g., Nora Cafe' : 'مثال: كافيه نورة',
+    city: lang === 'en' ? 'City *' : 'المدينة *',
+    cityPlaceholder: lang === 'en' ? 'e.g., Riyadh' : 'مثال: الرياض',
+    branches: lang === 'en' ? 'Number of Branches' : 'عدد الفروع',
+    branchesOptions: lang === 'en' 
+      ? [{val: '1', label: '1 Branch'}, {val: '2', label: '2 Branches'}, {val: '3-5', label: '3-5 Branches'}, {val: '6+', label: '6+ Branches'}]
+      : [{val: '1', label: '1 فرع'}, {val: '2', label: '2 فروع'}, {val: '3-5', label: '3–5 فروع'}, {val: '6+', label: '6+ فروع'}],
+    activityType: lang === 'en' ? 'Activity Type *' : 'نوع النشاط *',
+    activityOptions: lang === 'en'
+      ? [{val: '', label: 'Select...'}, {val: 'cafe', label: 'Cafe'}, {val: 'fastfood', label: 'Fast Food'}, {val: 'home', label: 'Home Business'}, {val: 'family', label: 'Family Restaurant'}, {val: 'other', label: 'Other'}]
+      : [{val: '', label: 'اختر...'}, {val: 'cafe', label: 'كافيه'}, {val: 'fastfood', label: 'مطعم وجبات سريعة'}, {val: 'home', label: 'مشروع منزلي'}, {val: 'family', label: 'مطعم عائلي'}, {val: 'other', label: 'أخرى'}],
+    menuLink: lang === 'en' ? 'Menu Link (if any)' : 'رابط المنيو (إن وجد)',
+    phone: lang === 'en' ? 'Phone / WhatsApp *' : 'رقم الجوال / واتساب *',
+    submit: lang === 'en' ? 'Submit Request' : 'إرسال الطلب',
+    privacy: lang === 'en' ? 'Your data is protected and will not be shared with any third party.' : 'بياناتك محمية ولن نشاركها مع أي طرف ثالث.',
+    successTitle: lang === 'en' ? 'Request sent successfully!' : 'تم إرسال طلبك بنجاح!',
+    successSub: lang === 'en' ? 'We will contact you within 24 hours' : 'سنتواصل معك خلال 24 ساعة',
+  };
 
   return (
     <div
@@ -105,29 +128,30 @@ export function ContactModal() {
       <div
         ref={modalRef}
         className="bg-white rounded-2xl w-full max-w-[560px] max-h-[90vh] overflow-y-auto p-8 md:p-10 relative"
+        dir={lang === 'en' ? 'ltr' : 'rtl'}
       >
         {/* Close button */}
         <button
           onClick={handleClose}
-          className="absolute top-4 left-4 p-2 text-warm-dark hover:text-primary-dark transition-colors"
-          aria-label="إغلاق"
+          className={`absolute top-4 ${lang === 'en' ? 'right-4' : 'left-4'} p-2 text-warm-dark hover:text-primary-dark transition-colors`}
+          aria-label={lang === 'en' ? 'Close' : 'إغلاق'}
         >
           <X className="w-6 h-6" />
         </button>
 
         {!submitted ? (
           <>
-            <h2 className="text-h2 text-primary-dark mb-2">{SITE_CONFIG.ui?.request_quote_button || 'اطلب تسعيرة تغليف مطعمك'}</h2>
-            <p className="text-body text-muted-text mb-8">نرد عليك خلال 24 ساعة</p>
+            <h2 className="text-h2 text-primary-dark mb-2">{t.title}</h2>
+            <p className="text-body text-muted-text mb-8">{t.subtitle}</p>
 
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
                 <label className="block text-caption font-semibold text-warm-dark mb-1.5">
-                  اسم المطعم أو المشروع *
+                  {t.restaurantName}
                 </label>
                 <input
                   type="text"
-                  placeholder="مثال: كافيه نورة"
+                  placeholder={t.restaurantNamePlaceholder}
                   value={formData.restaurantName}
                   onChange={(e) => setFormData({ ...formData, restaurantName: e.target.value })}
                   className={inputClass('restaurantName')}
@@ -136,11 +160,11 @@ export function ContactModal() {
 
               <div>
                 <label className="block text-caption font-semibold text-warm-dark mb-1.5">
-                  المدينة *
+                  {t.city}
                 </label>
                 <input
                   type="text"
-                  placeholder="مثال: الرياض"
+                  placeholder={t.cityPlaceholder}
                   value={formData.city}
                   onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                   className={inputClass('city')}
@@ -149,41 +173,37 @@ export function ContactModal() {
 
               <div>
                 <label className="block text-caption font-semibold text-warm-dark mb-1.5">
-                  عدد الفروع
+                  {t.branches}
                 </label>
                 <select
                   value={formData.branches}
                   onChange={(e) => setFormData({ ...formData, branches: e.target.value })}
                   className={inputClass('branches')}
                 >
-                  <option value="1">1 فرع</option>
-                  <option value="2">2 فروع</option>
-                  <option value="3-5">3–5 فروع</option>
-                  <option value="6+">6+ فروع</option>
+                  {t.branchesOptions.map(opt => (
+                    <option key={opt.val} value={opt.val}>{opt.label}</option>
+                  ))}
                 </select>
               </div>
 
               <div>
                 <label className="block text-caption font-semibold text-warm-dark mb-1.5">
-                  نوع النشاط *
+                  {t.activityType}
                 </label>
                 <select
                   value={formData.activityType}
                   onChange={(e) => setFormData({ ...formData, activityType: e.target.value })}
                   className={inputClass('activityType')}
                 >
-                  <option value="">اختر...</option>
-                  <option value="cafe">كافيه</option>
-                  <option value="fastfood">مطعم وجبات سريعة</option>
-                  <option value="home">مشروع منزلي</option>
-                  <option value="family">مطعم عائلي</option>
-                  <option value="other">أخرى</option>
+                  {t.activityOptions.map(opt => (
+                    <option key={opt.val} value={opt.val}>{opt.label}</option>
+                  ))}
                 </select>
               </div>
 
               <div>
                 <label className="block text-caption font-semibold text-warm-dark mb-1.5">
-                  رابط المنيو (إن وجد)
+                  {t.menuLink}
                 </label>
                 <input
                   type="url"
@@ -196,11 +216,11 @@ export function ContactModal() {
 
               <div>
                 <label className="block text-caption font-semibold text-warm-dark mb-1.5">
-                  رقم الجوال / واتساب *
+                  {t.phone}
                 </label>
                 <input
                   type="tel"
-                  placeholder="05XXXXXXXX"
+                  placeholder={lang === 'en' ? '05XXXXXXXX' : '05XXXXXXXX'}
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   className={inputClass('phone')}
@@ -208,19 +228,19 @@ export function ContactModal() {
               </div>
 
               <button type="submit" className="btn-primary w-full mt-3">
-                إرسال الطلب
+                {t.submit}
               </button>
 
               <p className="text-caption text-muted-text text-center mt-4">
-                بياناتك محمية ولن نشاركها مع أي طرف ثالث.
+                {t.privacy}
               </p>
             </form>
           </>
         ) : (
           <div className="flex flex-col items-center justify-center py-12 text-center">
             <CheckCircle className="w-12 h-12 text-success-green mb-4" />
-            <h3 className="text-h3 text-primary-dark mb-2">تم إرسال طلبك بنجاح!</h3>
-            <p className="text-body text-muted-text">سنتواصل معك خلال 24 ساعة</p>
+            <h3 className="text-h3 text-primary-dark mb-2">{t.successTitle}</h3>
+            <p className="text-body text-muted-text">{t.successSub}</p>
           </div>
         )}
       </div>

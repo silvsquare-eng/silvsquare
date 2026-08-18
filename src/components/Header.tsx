@@ -4,19 +4,29 @@ import { SITE_CONFIG, SECTION_IDS } from '@/config/site';
 import { useModal } from '@/hooks/useModal';
 import { getLenis } from '@/hooks/useLenis';
 
-const navLinks = [
-  { label: 'الخدمات', target: SECTION_IDS.services },
-  { label: 'الباقات', target: SECTION_IDS.packages },
-  { label: 'طريقة العمل', target: SECTION_IDS.process },
-  { label: 'الأسئلة', target: SECTION_IDS.faq },
-];
-
-export function Header({ currentPath = '/' }: { currentPath?: string }) {
+export function Header({ currentPath = '/', lang = 'ar' }: { currentPath?: string, lang?: 'ar' | 'en' }) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('');
   const { openModal } = useModal();
-  const isHome = currentPath === '/';
+  const isHome = currentPath === '/' || currentPath === '/en' || currentPath === '/en/';
+
+  const navLinks = lang === 'en' ? [
+    { label: 'Services', target: SECTION_IDS.services },
+    { label: 'Packages', target: SECTION_IDS.packages },
+    { label: 'Process', target: SECTION_IDS.process },
+    { label: 'FAQ', target: SECTION_IDS.faq },
+  ] : [
+    { label: 'الخدمات', target: SECTION_IDS.services },
+    { label: 'الباقات', target: SECTION_IDS.packages },
+    { label: 'طريقة العمل', target: SECTION_IDS.process },
+    { label: 'الأسئلة', target: SECTION_IDS.faq },
+  ];
+
+  const urlPrefix = lang === 'en' ? '/en' : '';
+  const homeText = lang === 'en' ? (SITE_CONFIG.ui_en?.home || 'Home') : (SITE_CONFIG.ui?.home || 'الرئيسية');
+  const productsText = lang === 'en' ? (SITE_CONFIG.ui_en?.products || 'Products') : (SITE_CONFIG.ui?.products || 'المنتجات');
+  const quoteText = lang === 'en' ? (SITE_CONFIG.ui_en?.request_quote || 'Request Quote') : (SITE_CONFIG.ui?.request_quote || 'اطلب تسعيرة');
 
   useEffect(() => {
     const handleScroll = () => {
@@ -45,7 +55,7 @@ export function Header({ currentPath = '/' }: { currentPath?: string }) {
 
   const scrollTo = (id: string) => {
     if (!isHome) {
-      window.location.href = '/#' + id;
+      window.location.href = `${urlPrefix || '/'}#${id}`;
       setMenuOpen(false);
       return;
     }
@@ -59,6 +69,18 @@ export function Header({ currentPath = '/' }: { currentPath?: string }) {
     setMenuOpen(false);
   };
 
+  const toggleLanguage = () => {
+    // If currently Arabic (no prefix or just '/'), go to /en
+    // If currently English (/en), go to /
+    let newPath = currentPath;
+    if (lang === 'ar') {
+      newPath = `/en${currentPath === '/' ? '' : currentPath}`;
+    } else {
+      newPath = currentPath.replace(/^\/en/, '') || '/';
+    }
+    window.location.href = newPath;
+  };
+
   return (
     <>
       <header
@@ -68,8 +90,8 @@ export function Header({ currentPath = '/' }: { currentPath?: string }) {
         style={{ backgroundColor: '#FFFFFF' }}
       >
         <div className="content-max-width h-full flex items-center justify-between px-5 md:px-10">
-          {/* Logo - right side in RTL */}
-          <a href="/" className="flex items-center gap-3">
+          {/* Logo */}
+          <a href={urlPrefix || "/"} className="flex items-center gap-3">
             <img src="/logo.jpg" alt={SITE_CONFIG.brand.name} className="h-12 w-auto object-contain" />
           </a>
 
@@ -77,10 +99,10 @@ export function Header({ currentPath = '/' }: { currentPath?: string }) {
           <nav className="hidden md:flex items-center gap-8">
             {!isHome && (
               <a
-                href="/"
+                href={urlPrefix || "/"}
                 className="text-sm font-medium transition-colors duration-300 pb-1 border-b-2 text-muted-text border-transparent hover:text-primary-dark"
               >
-                {SITE_CONFIG.ui?.home || 'الرئيسية'}
+                {homeText}
               </a>
             )}
             
@@ -99,27 +121,30 @@ export function Header({ currentPath = '/' }: { currentPath?: string }) {
             ))}
 
             <a
-              href="/catalog"
+              href={`${urlPrefix}/catalog`}
               className={`text-sm font-medium transition-colors duration-300 pb-1 border-b-2 ${
-                currentPath.startsWith('/catalog')
+                currentPath.includes('/catalog')
                   ? 'text-primary-accent border-primary-accent'
                   : 'text-muted-text border-transparent hover:text-primary-dark'
               }`}
             >
-              {SITE_CONFIG.ui?.products || 'المنتجات'}
+              {productsText}
             </a>
           </nav>
 
-          {/* Desktop CTA - left side in RTL */}
+          {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-3">
-            <button className="px-5 py-2 border border-warm-dark text-warm-dark rounded-pill text-sm font-medium transition-all duration-300 hover:bg-warm-dark hover:text-white">
-              EN
+            <button 
+              onClick={toggleLanguage}
+              className="px-5 py-2 border border-warm-dark text-warm-dark rounded-pill text-sm font-medium transition-all duration-300 hover:bg-warm-dark hover:text-white"
+            >
+              {lang === 'ar' ? 'EN' : 'عربي'}
             </button>
             <button
               onClick={openModal}
               className="px-6 py-2.5 bg-primary-accent text-white rounded-button text-sm font-semibold transition-all duration-300 hover:bg-primary-accent-hover hover:shadow-button-hover"
             >
-              {SITE_CONFIG.ui?.request_quote || 'اطلب تسعيرة'}
+              {quoteText}
             </button>
           </div>
 
@@ -147,11 +172,11 @@ export function Header({ currentPath = '/' }: { currentPath?: string }) {
           {/* Mobile Nav */}
           {!isHome && (
             <a
-              href="/"
+              href={urlPrefix || "/"}
               onClick={() => setMenuOpen(false)}
               className="text-h3 text-primary-dark hover:text-primary-accent transition-colors"
             >
-              {SITE_CONFIG.ui?.home || 'الرئيسية'}
+              {homeText}
             </a>
           )}
 
@@ -166,20 +191,28 @@ export function Header({ currentPath = '/' }: { currentPath?: string }) {
           ))}
 
           <a
-            href="/catalog"
+            href={`${urlPrefix}/catalog`}
             onClick={() => setMenuOpen(false)}
             className="text-h3 text-primary-dark hover:text-primary-accent transition-colors"
           >
-            {SITE_CONFIG.ui?.products || 'المنتجات'}
+            {productsText}
           </a>
+          
+          <button
+            onClick={toggleLanguage}
+            className="text-h4 text-neutral-500 hover:text-primary-dark transition-colors mt-4"
+          >
+            {lang === 'ar' ? 'English Version' : 'النسخة العربية'}
+          </button>
+
           <button
             onClick={() => {
               setMenuOpen(false);
               openModal();
             }}
-            className="btn-primary mt-4"
+            className="btn-primary mt-2"
           >
-            {SITE_CONFIG.ui?.request_quote || 'اطلب تسعيرة'}
+            {quoteText}
           </button>
         </div>
       )}

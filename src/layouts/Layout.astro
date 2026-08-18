@@ -9,30 +9,33 @@ interface Props {
   title?: string;
   description?: string;
   ogImage?: string;
+  lang?: 'ar' | 'en';
 }
 
 const { 
-  title = "المربع الفضي | تغليف مطاعم وكافيهات — من التصميم إلى باب الفرع", 
-  description = "مصنع سعودي في الخبر متخصص في تغليف المطاعم والكافيهات. تصميم وطباعة أكواب ورقية وبلاستيكية، أكياس قهوة، بوكسات طعام، ورق ساندوتش، وستيكرات. تسليم لجميع مدن السعودية.",
+  lang = 'ar',
+  title = lang === 'en' ? "Silver Square | Packaging for Restaurants and Cafes" : "المربع الفضي | تغليف مطاعم وكافيهات — من التصميم إلى باب الفرع", 
+  description = lang === 'en' ? "A Saudi factory in Al Khobar specializing in packaging for restaurants and cafes. Design and printing of paper and plastic cups, coffee bags, food boxes, sandwich paper, and stickers. Delivery to all Saudi cities." : "مصنع سعودي في الخبر متخصص في تغليف المطاعم والكافيهات. تصميم وطباعة أكواب ورقية وبلاستيكية، أكياس قهوة، بوكسات طعام، ورق ساندوتش، وستيكرات. تسليم لجميع مدن السعودية.",
   ogImage
 } = Astro.props;
 
 const currentPath = Astro.url.pathname;
+const dir = lang === 'en' ? 'ltr' : 'rtl';
 ---
 
 <!doctype html>
-<html lang="ar" dir="rtl">
+<html lang={lang} dir={dir}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     <meta name="description" content={description}>
-    <meta name="keywords" content="تغليف مطاعم, تغليف كافيهات, طباعة أكواب ورقية, أكياس قهوة, بوكسات طعام, ورق ساندوتش, ستيكرات مطاعم, مصنع تغليف السعودية, الخبر">
+    <meta name="keywords" content={lang === 'en' ? "restaurant packaging, cafe packaging, paper cups printing, coffee bags, food boxes, sandwich paper, restaurant stickers, Saudi packaging factory, Al Khobar" : "تغليف مطاعم, تغليف كافيهات, طباعة أكواب ورقية, أكياس قهوة, بوكسات طعام, ورق ساندوتش, ستيكرات مطاعم, مصنع تغليف السعودية, الخبر"}>
     <meta property="og:title" content={title}>
     <meta property="og:description" content={description}>
     <meta property="og:type" content="website">
     <meta property="og:url" content={Astro.url.href}>
-    <meta property="og:locale" content="ar_SA">
+    <meta property="og:locale" content={lang === 'en' ? "en_US" : "ar_SA"}>
     <meta property="og:image" content={ogImage || new URL('/logo.jpg', Astro.url).href}>
     <link rel="icon" type="image/jpeg" href="/logo.jpg" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -40,14 +43,14 @@ const currentPath = Astro.url.pathname;
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   </head>
   <body>
-    <div class="min-h-[100dvh]" dir="rtl">
-      <Header currentPath={currentPath} client:load />
+    <div class="min-h-[100dvh]" dir={dir}>
+      <Header currentPath={currentPath} lang={lang} client:load />
       <main>
         <slot />
       </main>
-      <Footer client:idle />
-      <WhatsAppFAB client:idle />
-      <ContactModal client:load />
+      <Footer lang={lang} client:idle />
+      <WhatsAppFAB lang={lang} client:idle />
+      <ContactModal lang={lang} client:load />
     </div>
     
     <script is:inline>

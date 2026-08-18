@@ -5,7 +5,7 @@ import { ChevronDown, Check } from 'lucide-react';
 import { SITE_CONFIG } from '@/config/site';
 import { useModal } from '@/hooks/useModal';
 
-export function HeroSection() {
+export function HeroSection({ lang = 'ar' }: { lang?: 'ar' | 'en' }) {
   const { openModal } = useModal();
   const sectionRef = useRef<HTMLElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
@@ -64,6 +64,19 @@ export function HeroSection() {
     gsap.fromTo(imgRef.current, { scale: 1.05 }, { scale: 1, duration: 8, ease: 'none' });
   }, []);
 
+  const t = {
+    preTitle: lang === 'en' ? 'Saudi Factory — Al Khobar' : 'مصنع سعودي — الخبر',
+    mainHeading: lang === 'en' ? 'We prepare your restaurant packaging from design to the branch door' : 'نجهز تغليف مطعمك من التصميم إلى باب الفرع',
+    subHeading: lang === 'en' ? 'One destination that analyzes your needs, designs your packaging identity, produces and prints all pieces, and manages periodic orders — for all your branches in Saudi Arabia.' : 'جهة واحدة تتولى تحليل احتياجك، تصميم هوية تغليفك، إنتاج وطباعة كل القطع، وإدارة الطلبات الدورية — لكل فروعك داخل السعودية',
+    benefits: lang === 'en' ? [
+      "Unified packaging for all branches",
+      "Full printing with your restaurant logo",
+      "Delivery within 10–14 working days"
+    ] : SITE_CONFIG.hero.benefits,
+    ctaQuote: lang === 'en' ? 'Request a quote for your restaurant' : 'اطلب تسعيرة تجهيز مطعمك',
+    ctaCatalog: lang === 'en' ? 'Visit Catalog' : 'زيارة الكتالوج'
+  };
+
   return (
     <section
       ref={sectionRef}
@@ -81,8 +94,9 @@ export function HeroSection() {
         <div
           className="absolute inset-0"
           style={{
-            background:
-              'linear-gradient(to left, rgba(24,20,17,0.78) 0%, rgba(24,20,17,0.45) 55%, rgba(24,20,17,0.15) 100%)',
+            background: lang === 'en'
+              ? 'linear-gradient(to right, rgba(24,20,17,0.85) 0%, rgba(24,20,17,0.55) 55%, rgba(24,20,17,0.15) 100%)'
+              : 'linear-gradient(to left, rgba(24,20,17,0.78) 0%, rgba(24,20,17,0.45) 55%, rgba(24,20,17,0.15) 100%)',
           }}
         />
       </div>
@@ -92,28 +106,27 @@ export function HeroSection() {
         ref={contentRef}
         className="relative z-10 content-max-width w-full px-5 md:px-10 pt-28 pb-20 md:pt-32 md:pb-16"
       >
-        <div className="max-w-[680px] mr-0 ml-auto">
+        <div className={`max-w-[680px] ${lang === 'en' ? 'ml-0 mr-auto' : 'mr-0 ml-auto'}`} dir={lang === 'en' ? 'ltr' : 'rtl'}>
           {/* Pre-title */}
           <div className="pre-title mb-6 opacity-0">
             <span className="inline-block text-caption tracking-wider text-secondary-warm bg-secondary-warm/15 px-4 py-1.5 rounded-pill">
-              مصنع سعودي — الخبر
+              {t.preTitle}
             </span>
           </div>
 
           {/* Main heading */}
           <h1 className="main-heading text-display text-white mb-5 max-w-[600px] opacity-0">
-            نجهز تغليف مطعمك من التصميم إلى باب الفرع
+            {t.mainHeading}
           </h1>
 
           {/* Subheading */}
           <p className="sub-heading text-subtitle text-white/80 mb-8 max-w-[540px] opacity-0">
-            جهة واحدة تتولى تحليل احتياجك، تصميم هوية تغليفك، إنتاج وطباعة كل القطع، وإدارة
-            الطلبات الدورية — لكل فروعك داخل السعودية
+            {t.subHeading}
           </p>
 
           {/* Benefits */}
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-10">
-            {SITE_CONFIG.hero.benefits.map((benefit: any, i: number) => (
+            {t.benefits.map((benefit: any, i: number) => (
               <div key={i} className="benefit-item flex items-center gap-2 opacity-0">
                 <Check className="w-4 h-4 text-primary-accent flex-shrink-0" />
                 <span className="text-body text-white/85">{benefit}</span>
@@ -127,13 +140,13 @@ export function HeroSection() {
               onClick={openModal}
               className="cta-btn btn-primary px-9 py-4 text-base opacity-0"
             >
-              اطلب تسعيرة تجهيز مطعمك
+              {t.ctaQuote}
             </button>
             <a
-              href={SITE_CONFIG.links.store}
+              href={`${lang === 'en' ? '/en' : ''}${SITE_CONFIG.links.store}`}
               className="cta-btn inline-flex items-center justify-center bg-transparent border-2 border-white/60 text-white font-semibold py-3.5 px-7 rounded-button transition-all duration-300 hover:bg-white hover:text-primary-dark opacity-0"
             >
-              زيارة الكتالوج
+              {t.ctaCatalog}
             </a>
           </div>
         </div>
