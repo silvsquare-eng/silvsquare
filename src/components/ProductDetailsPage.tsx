@@ -35,8 +35,11 @@ export function ProductDetailsPage({ product }: { product: DetailedProduct }) {
   const [show3D, setShow3D] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState<number | null>(null);
 
-  // Load model-viewer only on client-side
+  const [origin, setOrigin] = useState('');
+
+  // Load model-viewer only on client-side and set origin
   useEffect(() => {
+    setOrigin(window.location.origin);
     if (typeof window !== 'undefined') {
       import('@google/model-viewer').catch(console.error);
     }
@@ -62,7 +65,7 @@ export function ProductDetailsPage({ product }: { product: DetailedProduct }) {
   }
 
   const buildWhatsAppLink = () => {
-    const productUrl = typeof window !== 'undefined' ? `${window.location.origin}/catalog/${product.id}` : '';
+    const productUrl = `${origin || 'https://silvsquaresa.pages.dev'}/catalog/${product.id}`;
 
     let repId = null;
     if (typeof window !== 'undefined') {

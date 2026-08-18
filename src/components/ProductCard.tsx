@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { SITE_CONFIG, getRepNumber } from '@/config/site';
 
 export type ProductOptions = Record<string, string[]>;
@@ -20,9 +21,15 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
+  const [origin, setOrigin] = useState('');
+
+  useEffect(() => {
+    setOrigin(window.location.origin);
+  }, []);
+
   const buildWhatsAppLink = (product: Product) => {
     // Generate absolute URL for the product page
-    const productUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}/catalog/${product.id}`;
+    const productUrl = `${origin || 'https://silvsquaresa.pages.dev'}/catalog/${product.id}`;
     
     let repId = null;
     if (typeof window !== 'undefined') {
