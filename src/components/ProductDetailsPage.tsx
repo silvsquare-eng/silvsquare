@@ -296,6 +296,34 @@ export function ProductDetailsPage({ product }: { product: DetailedProduct }) {
           </div>
         </div>
 
+        {/* Branding & Printing Service Banner */}
+        <div className="mt-16 bg-white rounded-3xl overflow-hidden shadow-sm border border-neutral-100 flex flex-col md:flex-row items-stretch">
+          <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center order-2 md:order-1">
+            <span className="text-sm font-bold text-primary-accent mb-3 block">خدمات الطباعة والهوية البصرية</span>
+            <h2 className="text-2xl md:text-3xl font-bold text-primary-dark mb-4 leading-snug">
+              اجعل تغليفك يحكي قصة علامتك التجارية
+            </h2>
+            <p className="text-neutral-600 mb-8 leading-relaxed">
+              سواءً كنت تحتاج إلى طباعة شعارك بلون واحد بسيط وأنيق، أو ترغب في تنفيذ هوية بصرية كاملة متناسقة على جميع المنتجات (الأكواب، الأكياس، والبوكسات).. فريقنا مستعد لتحويل رؤيتك إلى واقع احترافي يعكس جودة مشروعك ويترك انطباعاً لا يُنسى لدى عملائك.
+            </p>
+            <button
+              onClick={() => {
+                window.open(buildWhatsAppLink(), '_blank');
+              }}
+              className="inline-flex w-fit items-center justify-center gap-2 bg-primary-dark hover:bg-primary-accent text-white py-3 px-8 rounded-xl font-semibold transition-colors"
+            >
+              استفسر عن الطباعة والتخصيص
+            </button>
+          </div>
+          <div className="w-full md:w-1/2 order-1 md:order-2">
+            <img 
+              src="/branding-mockup.jpg" 
+              alt="تغليف وهوية بصرية للمطاعم والكافيهات" 
+              className="w-full h-full object-cover min-h-[300px]"
+            />
+          </div>
+        </div>
+
         {/* Reviews Section */}
         <div className="mt-10">
           <Reviews
