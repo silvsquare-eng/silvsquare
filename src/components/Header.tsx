@@ -69,12 +69,9 @@ export function Header({ currentPath = '/' }: { currentPath?: string }) {
       >
         <div className="content-max-width h-full flex items-center justify-between px-5 md:px-10">
           {/* Logo - right side in RTL */}
-          <div className="flex flex-col">
-            <span className="font-bold text-lg text-primary-dark">{SITE_CONFIG.brand.name}</span>
-            <span className="text-caption text-muted-text hidden sm:block">
-              {SITE_CONFIG.brand.subtitle}
-            </span>
-          </div>
+          <a href="/" className="flex items-center gap-3">
+            <img src="/logo.jpg" alt={SITE_CONFIG.brand.name} className="h-12 w-auto object-contain" />
+          </a>
 
           {/* Desktop Nav - center */}
           <nav className="hidden md:flex items-center gap-8">
