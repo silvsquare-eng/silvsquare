@@ -3,61 +3,113 @@ import { useModal } from '@/hooks/useModal';
 import { SITE_CONFIG } from '@/config/site';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 
-const packages = [
-  {
-    name: 'باقة كافيه ستارتر',
-    target: 'كافيه جديد يفتح أول فرع',
-    contents: [
-      'أكواب ورقية 8oz و12oz (طباعة كاملة)',
-      'أكواب بلاستيكية مثلجة 16oz',
-      'أكياس قهوة 250g و1kg (طباعة كاملة)',
-      'ستيكرات براند (3 مقاسات)',
-      'ورق زبدة مطبوع (500 ورقة)',
-    ],
-    quantity: 'الحد الأدنى: 5,000 قطعة إجمالي',
-    delivery: 'تسليم أول طلب: 10–12 يوم عمل',
-    featured: false,
-  },
-  {
-    name: 'باقة مطعم وجبات سريعة',
-    target: 'مطاعم البرجر، الشاورما، والوجبات السريعة',
-    contents: [
-      'بوكسات طعام بمقاسات متعددة (طباعة كاملة)',
-      'ورق ساندوتش / زبدة مطبوع (1,000 ورقة)',
-      'أكياس ورقية مطبوعة (3 مقاسات)',
-      'أكواب مشروبات 8oz و12oz',
-      'ستيكرات أمان للأغذية',
-      'بوكس الجمعات (Large Family Box)',
-    ],
-    quantity: 'الحد الأدنى: 10,000 قطعة إجمالي',
-    delivery: 'تسليم أول طلب: 12–14 يوم عمل',
-    featured: true,
-  },
-  {
-    name: 'باقة مشروع منزلي',
-    target: 'مشاريع منزلية تتوسع وتريد تغليف احترافي',
-    contents: [
-      'أكواب ورقية 8oz (طباعة كاملة)',
-      'أكياس ورقية صغيرة مطبوعة',
-      'ستيكرات براند (2 مقاسات)',
-      'ورق زبدة مطبوع (250 ورقة)',
-    ],
-    quantity: 'الحد الأدنى: 2,500 قطعة إجمالي',
-    delivery: 'تسليم أول طلب: 8–10 أيام عمل',
-    featured: false,
-  },
-];
-
-export function PackagesSection() {
+export function PackagesSection({ lang = 'ar' }: { lang?: 'ar' | 'en' }) {
   const { openModal } = useModal();
   const { ref: gridRef, isVisible } = useScrollReveal();
+
+  const packages = lang === 'en' ? [
+    {
+      name: 'Cafe Starter Package',
+      target: 'A new cafe opening its first branch',
+      contents: [
+        'Paper cups 8oz and 12oz (full print)',
+        'Iced plastic cups 16oz',
+        'Coffee bags 250g and 1kg (full print)',
+        'Brand stickers (3 sizes)',
+        'Printed parchment paper (500 sheets)',
+      ],
+      quantity: 'Minimum: 5,000 pieces total',
+      delivery: 'First order delivery: 10–12 working days',
+      featured: false,
+    },
+    {
+      name: 'Fast Food Restaurant Package',
+      target: 'Burger, shawarma, and fast food restaurants',
+      contents: [
+        'Food boxes in multiple sizes (full print)',
+        'Sandwich wrap / parchment paper (1,000 sheets)',
+        'Printed paper bags (3 sizes)',
+        'Beverage cups 8oz and 12oz',
+        'Food safety stickers',
+        'Large Family Box',
+      ],
+      quantity: 'Minimum: 10,000 pieces total',
+      delivery: 'First order delivery: 12–14 working days',
+      featured: true,
+    },
+    {
+      name: 'Home Business Package',
+      target: 'Home businesses scaling and wanting professional packaging',
+      contents: [
+        'Paper cups 8oz (full print)',
+        'Small printed paper bags',
+        'Brand stickers (2 sizes)',
+        'Printed parchment paper (250 sheets)',
+      ],
+      quantity: 'Minimum: 2,500 pieces total',
+      delivery: 'First order delivery: 8–10 working days',
+      featured: false,
+    },
+  ] : [
+    {
+      name: 'باقة كافيه ستارتر',
+      target: 'كافيه جديد يفتح أول فرع',
+      contents: [
+        'أكواب ورقية 8oz و12oz (طباعة كاملة)',
+        'أكواب بلاستيكية مثلجة 16oz',
+        'أكياس قهوة 250g و1kg (طباعة كاملة)',
+        'ستيكرات براند (3 مقاسات)',
+        'ورق زبدة مطبوع (500 ورقة)',
+      ],
+      quantity: 'الحد الأدنى: 5,000 قطعة إجمالي',
+      delivery: 'تسليم أول طلب: 10–12 يوم عمل',
+      featured: false,
+    },
+    {
+      name: 'باقة مطعم وجبات سريعة',
+      target: 'مطاعم البرجر، الشاورما، والوجبات السريعة',
+      contents: [
+        'بوكسات طعام بمقاسات متعددة (طباعة كاملة)',
+        'ورق ساندوتش / زبدة مطبوع (1,000 ورقة)',
+        'أكياس ورقية مطبوعة (3 مقاسات)',
+        'أكواب مشروبات 8oz و12oz',
+        'ستيكرات أمان للأغذية',
+        'بوكس الجمعات (Large Family Box)',
+      ],
+      quantity: 'الحد الأدنى: 10,000 قطعة إجمالي',
+      delivery: 'تسليم أول طلب: 12–14 يوم عمل',
+      featured: true,
+    },
+    {
+      name: 'باقة مشروع منزلي',
+      target: 'مشاريع منزلية تتوسع وتريد تغليف احترافي',
+      contents: [
+        'أكواب ورقية 8oz (طباعة كاملة)',
+        'أكياس ورقية صغيرة مطبوعة',
+        'ستيكرات براند (2 مقاسات)',
+        'ورق زبدة مطبوع (250 ورقة)',
+      ],
+      quantity: 'الحد الأدنى: 2,500 قطعة إجمالي',
+      delivery: 'تسليم أول طلب: 8–10 أيام عمل',
+      featured: false,
+    },
+  ];
+
+  const t = {
+    eyebrow: lang === 'en' ? 'Ready Solutions' : 'حلول جاهزة',
+    heading: lang === 'en' ? 'Ready packages for your restaurant and cafe' : 'باقات جاهزة لمطعمك وكافيهك',
+    featured: lang === 'en' ? 'Most Popular' : 'الأكثر طلباً',
+    target: lang === 'en' ? 'For who?' : 'لمن؟',
+    btnQuote: lang === 'en' ? 'Request Quote' : 'اطلب تسعيرة',
+    btnCatalog: lang === 'en' ? 'View Products in Store →' : 'عرض المنتجات في المتجر →',
+  };
 
   return (
     <section id="packages" className="bg-white section-padding">
       <div className="content-max-width">
-        <SectionHeader eyebrow="حلول جاهزة" heading="باقات جاهزة لمطعمك وكافيهك" />
+        <SectionHeader eyebrow={t.eyebrow} heading={t.heading} />
 
-        <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-3 gap-6" dir={lang === 'en' ? 'ltr' : 'rtl'}>
           {packages.map((pkg, index) => (
             <div
               key={index}
@@ -78,14 +130,14 @@ export function PackagesSection() {
             >
               {pkg.featured && (
                 <span className="inline-block text-caption bg-primary-accent text-white px-4 py-1 rounded-pill mb-4">
-                  الأكثر طلباً
+                  {t.featured}
                 </span>
               )}
 
               <h3 className="text-h3 text-primary-dark mb-2">{pkg.name}</h3>
 
               <div className="mb-4">
-                <span className="text-caption text-secondary-warm font-medium">لمن؟</span>
+                <span className="text-caption text-secondary-warm font-medium">{t.target}</span>
                 <p className="text-subtitle text-primary-dark mt-1">{pkg.target}</p>
               </div>
 
@@ -108,15 +160,15 @@ export function PackagesSection() {
 
               <div className="space-y-3">
                 <button onClick={openModal} className="btn-primary w-full">
-                  اطلب تسعيرة
+                  {t.btnQuote}
                 </button>
                 <a
-                  href={SITE_CONFIG.links.store}
+                  href={`${lang === 'en' ? '/en' : ''}${SITE_CONFIG.links.store}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn-ghost w-full text-sm"
                 >
-                  عرض المنتجات في المتجر →
+                  {t.btnCatalog}
                 </a>
               </div>
             </div>
