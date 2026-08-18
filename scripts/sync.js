@@ -87,7 +87,8 @@ async function syncCatalog(csvData) {
         }
       } else if (!standardFields.includes(key) && key.trim() !== '') {
         const val = row[key];
-        options[key] = val ? val.split(',').map(s => s.trim()).filter(Boolean) : [];
+        // Support splitting by both English comma (,) and Arabic comma (،)
+        options[key] = val ? val.split(/[,،]/).map(s => s.trim()).filter(Boolean) : [];
       }
     }
     
