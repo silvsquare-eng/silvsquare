@@ -106,16 +106,16 @@ async function syncCatalog(csvData, csvDataEn) {
       }
     }
 
-    // Process English Row Options (Overrides any _en columns in Arabic sheet)
     for (const key of Object.keys(enRow)) {
       const cleanKey = key.replace(/_en$/i, ''); // Strip _en suffix for easier matching
-      if (cleanKey.toLowerCase().endsWith(' image') || cleanKey.startsWith('image_') || cleanKey.startsWith('صورة_')) {
+      const lowerKey = cleanKey.toLowerCase();
+      if (lowerKey.match(/_image-?$/) || lowerKey.match(/ image-?$/) || lowerKey.startsWith('image_') || lowerKey.startsWith('صورة_')) {
         const val = enRow[key] ? enRow[key].trim() : '';
         if (val !== '') {
           // avoid duplicating images in extraImages if they already exist
           if (!extraImages.includes(val)) extraImages.push(val);
           
-          let suffix = cleanKey.replace(/^(image_|صورة_)/, '').replace(/ image$/i, '').trim();
+          let suffix = cleanKey.replace(/^(image_|صورة_)/i, '').replace(/(_image| image)-?$/i, '').trim();
           if (isNaN(Number(suffix)) && suffix !== '') {
             optionImages[suffix] = val;
           }
