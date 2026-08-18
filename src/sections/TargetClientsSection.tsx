@@ -71,7 +71,7 @@ export function TargetClientsSection({ lang = 'ar' }: { lang?: 'ar' | 'en' }) {
   return (
     <section id="clients" className="bg-white section-padding">
       <div className="content-max-width">
-        <SectionHeader eyebrow={eybrow} heading={heading} />
+        <SectionHeader eyebrow={eyebrow} heading={heading} />
 
         <div ref={gridRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" dir={lang === 'en' ? 'ltr' : 'rtl'}>
           {clients.map((client, index) => (
