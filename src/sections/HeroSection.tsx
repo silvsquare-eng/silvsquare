@@ -65,7 +65,7 @@ export function HeroSection({ lang = 'ar' }: { lang?: 'ar' | 'en' }) {
   }, []);
 
   const t = {
-    preTitle: lang === 'en' ? 'Saudi Factory — Al Khobar' : 'مصنع سعودي — الخبر',
+    preTitle: lang === 'en' ? 'Saudi Factory — Al Khobar' : 'المربع الفضي للتعبئة والتغليف',
     mainHeading: lang === 'en' ? 'We prepare your restaurant packaging from design to the branch door' : 'نجهز تغليف مطعمك من التصميم إلى باب الفرع',
     subHeading: lang === 'en' ? 'One destination that analyzes your needs, designs your packaging identity, produces and prints all pieces, and manages periodic orders — for all your branches in Saudi Arabia.' : 'جهة واحدة تتولى تحليل احتياجك، تصميم هوية تغليفك، إنتاج وطباعة كل القطع، وإدارة الطلبات الدورية — لكل فروعك داخل السعودية',
     benefits: lang === 'en' ? [
