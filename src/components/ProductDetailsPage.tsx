@@ -123,7 +123,7 @@ export function ProductDetailsPage({ product, lang = "ar" }: { product: Detailed
   const getColorImage = () => {
     // 1. Check explicitly mapped option images first
     if (product?.option_images) {
-      for (const [key, selectedValue] of Object.entries(selectedOptions)) {
+      for (const [, selectedValue] of Object.entries(selectedOptions)) {
         if (selectedValue) {
           const matchKey = Object.keys(product.option_images).find(k => k.toLowerCase() === selectedValue.toLowerCase());
           if (matchKey) {

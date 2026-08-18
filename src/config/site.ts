@@ -9,6 +9,7 @@ export interface SiteConfig {
   seo: any;
   catalog: any;
   ui?: Record<string, string>;
+  ui_en?: Record<string, string>;
   reps?: Record<string, string>;
 }
 
