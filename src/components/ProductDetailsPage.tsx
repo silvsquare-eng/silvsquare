@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { ChevronRight, MessageCircle, Box } from 'lucide-react';
 import { Reviews } from '@/components/Reviews';
 import type { Product } from '@/components/ProductCard';
-import { getRepNumber } from '@/config/site';
+import { SITE_CONFIG, getRepNumber } from '@/config/site';
 
 declare global {
   namespace JSX {
