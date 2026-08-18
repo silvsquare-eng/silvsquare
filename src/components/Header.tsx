@@ -92,7 +92,7 @@ export function Header({ currentPath = '/', lang = 'ar' }: { currentPath?: strin
         <div className="content-max-width h-full flex items-center justify-between px-5 md:px-10">
           {/* Logo */}
           <a href={urlPrefix || "/"} className="flex items-center gap-3">
-            <img src="/logo.jpg" alt={SITE_CONFIG.brand.name} className="h-12 w-auto object-contain" />
+            <img src="/logo.png" alt={SITE_CONFIG.brand.name} className="h-12 w-auto object-contain" />
           </a>
 
           {/* Desktop Nav - center */}
