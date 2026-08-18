@@ -71,12 +71,13 @@ async function syncCatalog(csvData) {
     }
   } catch (e) {}
 
-  const standardFields = ['id', 'name', 'category', 'description', 'base_price', 'main_image', 'model_3d', 'additional_images', 'skus', ...ignoredColumns];
+  const standardFields = ['id', 'name', 'name_en', 'category', 'category_en', 'description', 'description_en', 'base_price', 'main_image', 'model_3d', 'additional_images', 'skus', ...ignoredColumns];
   
   const catalog = records.map(row => {
     const existing = existingCatalog.find(p => p.id === row.id) || {};
     
     const options = {};
+    const options_en = {};
     const extraImages = [];
     const optionImages = {};
     
@@ -95,8 +96,12 @@ async function syncCatalog(csvData) {
         }
       } else if (!standardFields.includes(key) && key.trim() !== '') {
         const val = row[key];
-        // Support splitting by both English comma (,) and Arabic comma (،)
-        options[key] = val ? val.split(/[,،]/).map(s => s.trim()).filter(Boolean) : [];
+        const parsedVals = val ? val.split(/[,،]/).map(s => s.trim()).filter(Boolean) : [];
+        if (key.endsWith('_en')) {
+          options_en[key.replace('_en', '')] = parsedVals;
+        } else {
+          options[key] = parsedVals;
+        }
       }
     }
     
@@ -106,13 +111,17 @@ async function syncCatalog(csvData) {
     return {
       id: row.id,
       name: row.name,
+      name_en: row.name_en || row.name,
       category: row.category,
+      category_en: row.category_en || row.category,
       description: row.description,
+      description_en: row.description_en || row.description,
       base_price: row.base_price || "",
       main_image: row.main_image,
       model_3d: row.model_3d || undefined,
       additional_images: allAdditionalImages,
       options: options,
+      options_en: Object.keys(options_en).length > 0 ? options_en : options,
       option_images: optionImages,
       skus: row.skus ? row.skus.split(',').map(s => s.trim()).filter(Boolean) : (row.id ? [row.id] : []),
       rating: existing.rating || 5.0,
