@@ -36,10 +36,12 @@ export function ProductDetailsPage({ product }: { product: DetailedProduct }) {
   const [activeImageIndex, setActiveImageIndex] = useState<number | null>(null);
 
   const [origin, setOrigin] = useState('');
+  const [repId, setRepId] = useState<string | null>(null);
 
   // Load model-viewer only on client-side and set origin
   useEffect(() => {
     setOrigin(window.location.origin);
+    setRepId(localStorage.getItem('sales_rep'));
     if (typeof window !== 'undefined') {
       import('@google/model-viewer').catch(console.error);
     }
@@ -67,10 +69,6 @@ export function ProductDetailsPage({ product }: { product: DetailedProduct }) {
   const buildWhatsAppLink = () => {
     const productUrl = `${origin || 'https://silvsquaresa.pages.dev'}/catalog/${product.id}`;
 
-    let repId = null;
-    if (typeof window !== 'undefined') {
-      repId = localStorage.getItem('sales_rep');
-    }
     const phoneNumber = getRepNumber(repId);
     const imageUrl = getColorImage();
 

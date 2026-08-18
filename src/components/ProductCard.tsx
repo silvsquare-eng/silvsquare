@@ -22,19 +22,17 @@ interface ProductCardProps {
 
 export function ProductCard({ product }: ProductCardProps) {
   const [origin, setOrigin] = useState('');
+  const [repId, setRepId] = useState<string | null>(null);
 
   useEffect(() => {
     setOrigin(window.location.origin);
+    setRepId(localStorage.getItem('sales_rep'));
   }, []);
 
   const buildWhatsAppLink = (product: Product) => {
     // Generate absolute URL for the product page
     const productUrl = `${origin || 'https://silvsquaresa.pages.dev'}/catalog/${product.id}`;
     
-    let repId = null;
-    if (typeof window !== 'undefined') {
-      repId = localStorage.getItem('sales_rep');
-    }
     const phoneNumber = getRepNumber(repId);
     
     const message = encodeURIComponent(
