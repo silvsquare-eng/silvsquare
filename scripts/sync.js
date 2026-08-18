@@ -78,12 +78,20 @@ async function syncCatalog(csvData) {
     
     const options = {};
     const extraImages = [];
+    const optionImages = {};
     
     for (const key of Object.keys(row)) {
       // Support dynamic image columns like image_1, image_2, or صورة_1
       if (key.startsWith('image_') || key.startsWith('صورة_')) {
-        if (row[key] && row[key].trim() !== '') {
-          extraImages.push(row[key].trim());
+        const val = row[key] ? row[key].trim() : '';
+        if (val !== '') {
+          extraImages.push(val);
+          
+          // Map column name to option if it's not just a number. e.g. "صورة_أحمر" -> "أحمر"
+          const suffix = key.replace(/^(image_|صورة_)/, '').trim();
+          if (isNaN(Number(suffix)) && suffix !== '') {
+            optionImages[suffix] = val;
+          }
         }
       } else if (!standardFields.includes(key) && key.trim() !== '') {
         const val = row[key];
@@ -105,6 +113,7 @@ async function syncCatalog(csvData) {
       model_3d: row.model_3d || undefined,
       additional_images: allAdditionalImages,
       options: options,
+      option_images: optionImages,
       skus: row.skus ? row.skus.split(',').map(s => s.trim()).filter(Boolean) : (row.id ? [row.id] : []),
       rating: existing.rating || 5.0,
       reviews: existing.reviews || []

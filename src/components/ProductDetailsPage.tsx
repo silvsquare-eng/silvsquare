@@ -91,6 +91,17 @@ export function ProductDetailsPage({ product }: { product: DetailedProduct }) {
   };
 
   const getColorImage = () => {
+    // 1. Check explicitly mapped option images first
+    if (product?.option_images) {
+      // Look through all selected options (colors, sizes, etc.)
+      for (const [key, selectedValue] of Object.entries(selectedOptions)) {
+        if (selectedValue && product.option_images[selectedValue]) {
+          return product.option_images[selectedValue];
+        }
+      }
+    }
+
+    // 2. Fallback to guessing by order for color-like keys (legacy support)
     const colorKey = Object.keys(product?.options || {}).find(k => k.toLowerCase() === 'colors' || k === 'اللون' || k === 'color');
     if (!product || !colorKey) return product?.main_image;
     

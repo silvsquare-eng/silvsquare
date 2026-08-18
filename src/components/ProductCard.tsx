@@ -13,6 +13,7 @@ export interface Product {
   additional_images: string[];
   model_3d?: string;
   options: ProductOptions;
+  option_images?: Record<string, string>;
   skus: string[];
 }
 
