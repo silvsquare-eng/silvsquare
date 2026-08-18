@@ -76,14 +76,23 @@ async function syncCatalog(csvData) {
   const catalog = records.map(row => {
     const existing = existingCatalog.find(p => p.id === row.id) || {};
     
-    // استخراج الصفات المتغيرة (الخيارات) ديناميكياً من الأعمدة غير القياسية
     const options = {};
+    const extraImages = [];
+    
     for (const key of Object.keys(row)) {
-      if (!standardFields.includes(key) && key.trim() !== '') {
+      // Support dynamic image columns like image_1, image_2, or صورة_1
+      if (key.startsWith('image_') || key.startsWith('صورة_')) {
+        if (row[key] && row[key].trim() !== '') {
+          extraImages.push(row[key].trim());
+        }
+      } else if (!standardFields.includes(key) && key.trim() !== '') {
         const val = row[key];
         options[key] = val ? val.split(',').map(s => s.trim()).filter(Boolean) : [];
       }
     }
+    
+    let allAdditionalImages = row.additional_images ? row.additional_images.split(',').map(s => s.trim()).filter(Boolean) : [];
+    allAdditionalImages = [...allAdditionalImages, ...extraImages];
     
     return {
       id: row.id,
@@ -93,7 +102,7 @@ async function syncCatalog(csvData) {
       base_price: row.base_price || "",
       main_image: row.main_image,
       model_3d: row.model_3d || undefined,
-      additional_images: row.additional_images ? row.additional_images.split(',').map(s => s.trim()).filter(Boolean) : [],
+      additional_images: allAdditionalImages,
       options: options,
       skus: row.skus ? row.skus.split(',').map(s => s.trim()).filter(Boolean) : (row.id ? [row.id] : []),
       rating: existing.rating || 5.0,
