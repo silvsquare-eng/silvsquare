@@ -66,7 +66,7 @@ export function ServicesSection({ lang = 'ar' }: { lang?: 'ar' | 'en' }) {
   ];
 
   const eyebrow = lang === 'en' ? 'Complete Packaging Portfolio' : 'ملف التغليف الكامل';
-  const heading = lang === 'en' ? 'What do we manage for you in the packaging portfolio?' : 'ماذا نمسك لك في ملف التغليف؟';
+  const heading = lang === 'en' ? 'What do we manage for you in the packaging portfolio?' : 'إيش نمسك لك في ملف التغليف؟';
 
   return (
     <section id="services" className="bg-sand section-padding">
