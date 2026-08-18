@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ChevronRight } from 'lucide-react';
 import { ProductCard } from '@/components/ProductCard';
 import type { Product } from '@/components/ProductCard';
+import { SITE_CONFIG } from '@/config/site';
 
 export function CatalogPage({ products }: { products: Product[] }) {
   const [selectedCategory, setSelectedCategory] = useState<string>('الكل');
@@ -24,8 +25,8 @@ export function CatalogPage({ products }: { products: Product[] }) {
             <ChevronRight className="w-4 h-4 ml-1" />
             العودة للرئيسية
           </a>
-          <h1 className="text-3xl md:text-4xl font-bold text-primary-dark">كتالوج المنتجات</h1>
-          <p className="text-neutral-500 mt-2">تصفح مجموعة منتجاتنا المتنوعة واطلب تسعيرة مباشرة</p>
+          <h1 className="text-3xl md:text-4xl font-bold text-primary-dark">{SITE_CONFIG.ui?.products || 'المنتجات'}</h1>
+          <p className="text-neutral-500 mt-2">{SITE_CONFIG.ui?.catalog_subtitle || 'تصفح مجموعة منتجاتنا المتنوعة واطلب تسعيرة مباشرة'}</p>
         </div>
 
         {/* Category Filter */}

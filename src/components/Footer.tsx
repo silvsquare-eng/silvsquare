@@ -78,7 +78,7 @@ export function Footer() {
               </li>
             </ul>
             <p className="text-caption text-warm-dark mt-4">
-              &copy; 2025 {SITE_CONFIG.brand.name}. جميع الحقوق محفوظة.
+              &copy; 2025 {SITE_CONFIG.brand.name}. {SITE_CONFIG.ui?.all_rights_reserved || 'جميع الحقوق محفوظة.'}
             </p>
           </div>
         </div>

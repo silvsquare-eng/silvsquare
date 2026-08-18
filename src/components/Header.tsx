@@ -83,7 +83,7 @@ export function Header({ currentPath = '/' }: { currentPath?: string }) {
                 href="/"
                 className="text-sm font-medium transition-colors duration-300 pb-1 border-b-2 text-muted-text border-transparent hover:text-primary-dark"
               >
-                الرئيسية
+                {SITE_CONFIG.ui?.home || 'الرئيسية'}
               </a>
             )}
             
@@ -109,7 +109,7 @@ export function Header({ currentPath = '/' }: { currentPath?: string }) {
                   : 'text-muted-text border-transparent hover:text-primary-dark'
               }`}
             >
-              الكتالوج
+              {SITE_CONFIG.ui?.products || 'المنتجات'}
             </a>
           </nav>
 
@@ -122,7 +122,7 @@ export function Header({ currentPath = '/' }: { currentPath?: string }) {
               onClick={openModal}
               className="px-6 py-2.5 bg-primary-accent text-white rounded-button text-sm font-semibold transition-all duration-300 hover:bg-primary-accent-hover hover:shadow-button-hover"
             >
-              اطلب تسعيرة
+              {SITE_CONFIG.ui?.request_quote || 'اطلب تسعيرة'}
             </button>
           </div>
 
@@ -154,7 +154,7 @@ export function Header({ currentPath = '/' }: { currentPath?: string }) {
               onClick={() => setMenuOpen(false)}
               className="text-h3 text-primary-dark hover:text-primary-accent transition-colors"
             >
-              الرئيسية
+              {SITE_CONFIG.ui?.home || 'الرئيسية'}
             </a>
           )}
 
@@ -173,7 +173,7 @@ export function Header({ currentPath = '/' }: { currentPath?: string }) {
             onClick={() => setMenuOpen(false)}
             className="text-h3 text-primary-dark hover:text-primary-accent transition-colors"
           >
-            الكتالوج
+            {SITE_CONFIG.ui?.products || 'المنتجات'}
           </a>
           <button
             onClick={() => {
@@ -182,7 +182,7 @@ export function Header({ currentPath = '/' }: { currentPath?: string }) {
             }}
             className="btn-primary mt-4"
           >
-            اطلب تسعيرة
+            {SITE_CONFIG.ui?.request_quote || 'اطلب تسعيرة'}
           </button>
         </div>
       )}

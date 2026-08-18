@@ -31,7 +31,7 @@ export function ProductCard({ product }: ProductCardProps) {
     const phoneNumber = getRepNumber(repId);
     
     const message = encodeURIComponent(
-      `مرحباً، أود الاستفسار عن المنتج التالي:\n\n` +
+      `${SITE_CONFIG.ui?.whatsapp_message || 'مرحباً، أود الاستفسار عن المنتج التالي:'}\n\n` +
       `📦 الموديل: ${product.name}\n` +
       `🏷️ الكود: ${product.id}\n` +
       `رابط المنتج:\n${productUrl}`
@@ -77,7 +77,7 @@ export function ProductCard({ product }: ProductCardProps) {
             rel="noopener noreferrer"
             className="flex-1 text-center bg-[#25D366] text-white py-2 px-2 rounded-button text-sm font-semibold hover:bg-[#20bd5a] transition-colors whitespace-nowrap"
           >
-            طلب تسعيرة
+            {SITE_CONFIG.ui?.request_product_quote || 'طلب تسعيرة'}
           </a>
           <a
             href={`/catalog/${product.id}`}

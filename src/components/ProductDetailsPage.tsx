@@ -112,7 +112,7 @@ export function ProductDetailsPage({ product }: { product: DetailedProduct }) {
       <div className="content-max-width px-5 md:px-10">
         <a href="/catalog" className="inline-flex items-center text-sm text-neutral-500 hover:text-primary-accent transition-colors mb-8">
           <ChevronRight className="w-4 h-4 ml-1" />
-          العودة للكتالوج
+          {SITE_CONFIG.ui?.view_catalog || 'العودة للكتالوج'}
         </a>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 bg-white rounded-3xl p-6 shadow-sm border border-neutral-100">
@@ -213,7 +213,7 @@ export function ProductDetailsPage({ product }: { product: DetailedProduct }) {
             {/* Contact Action */}
             <div className="mt-auto pt-6 border-t border-neutral-100">
               <a href={buildWhatsAppLink()} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#1EBE5D] text-white py-3 px-4 rounded-xl text-lg font-bold transition-colors w-full">
-                <MessageCircle className="w-5 h-5" /> طلب تسعيرة
+                <MessageCircle className="w-5 h-5" /> {SITE_CONFIG.ui?.request_product_quote || 'طلب تسعيرة'}
               </a>
             </div>
 

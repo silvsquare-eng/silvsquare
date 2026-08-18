@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { X, CheckCircle } from 'lucide-react';
 import { useModal } from '@/hooks/useModal';
+import { SITE_CONFIG } from '@/config/site';
 import gsap from 'gsap';
 
 interface FormData {
@@ -116,7 +117,7 @@ export function ContactModal() {
 
         {!submitted ? (
           <>
-            <h2 className="text-h2 text-primary-dark mb-2">اطلب تسعيرة تغليف مطعمك</h2>
+            <h2 className="text-h2 text-primary-dark mb-2">{SITE_CONFIG.ui?.request_quote_button || 'اطلب تسعيرة تغليف مطعمك'}</h2>
             <p className="text-body text-muted-text mb-8">نرد عليك خلال 24 ساعة</p>
 
             <form onSubmit={handleSubmit} className="space-y-5">
