@@ -32,8 +32,6 @@
 
   body {
     @apply bg-sand text-primary-dark font-sans antialiased;
-    direction: rtl;
-    text-align: right;
   }
 
   * {
