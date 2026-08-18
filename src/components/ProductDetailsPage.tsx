@@ -124,8 +124,11 @@ export function ProductDetailsPage({ product, lang = "ar" }: { product: Detailed
     // 1. Check explicitly mapped option images first
     if (product?.option_images) {
       for (const [key, selectedValue] of Object.entries(selectedOptions)) {
-        if (selectedValue && product.option_images[selectedValue]) {
-          return product.option_images[selectedValue];
+        if (selectedValue) {
+          const matchKey = Object.keys(product.option_images).find(k => k.toLowerCase() === selectedValue.toLowerCase());
+          if (matchKey) {
+            return product.option_images[matchKey];
+          }
         }
       }
     }

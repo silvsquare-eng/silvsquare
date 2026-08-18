@@ -108,7 +108,18 @@ async function syncCatalog(csvData, csvDataEn) {
 
     // Process English Row Options (Overrides any _en columns in Arabic sheet)
     for (const key of Object.keys(enRow)) {
-      if (!key.startsWith('image_') && !key.startsWith('صورة_') && !standardFields.includes(key) && key.trim() !== '') {
+      if (key.toLowerCase().endsWith(' image') || key.startsWith('image_') || key.startsWith('صورة_')) {
+        const val = enRow[key] ? enRow[key].trim() : '';
+        if (val !== '') {
+          // avoid duplicating images in extraImages if they already exist
+          if (!extraImages.includes(val)) extraImages.push(val);
+          
+          let suffix = key.replace(/^(image_|صورة_)/, '').replace(/ image$/i, '').trim();
+          if (isNaN(Number(suffix)) && suffix !== '') {
+            optionImages[suffix] = val;
+          }
+        }
+      } else if (!standardFields.includes(key) && key.trim() !== '') {
         const val = enRow[key];
         options_en[key] = val ? val.split(/[,،]/).map(s => s.trim()).filter(Boolean) : [];
       }
