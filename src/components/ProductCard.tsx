@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { ChevronRight, ChevronLeft } from 'lucide-react';
-import { SITE_CONFIG, getRepNumber } from '@/config/site';
+import { useState, useEffect } from "react";
+import { ChevronRight, ChevronLeft } from "lucide-react";
+import { SITE_CONFIG, getRepNumber } from "@/config/site";
 
 export type ProductOptions = Record<string, string[]>;
 
@@ -23,60 +23,67 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
-  const [origin, setOrigin] = useState('');
+  const [origin, setOrigin] = useState("");
   const [repId, setRepId] = useState<string | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
     setOrigin(window.location.origin);
-    setRepId(localStorage.getItem('sales_rep'));
+    setRepId(localStorage.getItem("sales_rep"));
   }, []);
 
   const allImages = [product.main_image, ...(product.additional_images || [])];
 
   const nextImage = (e: React.MouseEvent) => {
     e.preventDefault();
-    setCurrentImageIndex((prev) => (prev === allImages.length - 1 ? 0 : prev + 1));
+    setCurrentImageIndex((prev) =>
+      prev === allImages.length - 1 ? 0 : prev + 1,
+    );
   };
 
   const prevImage = (e: React.MouseEvent) => {
     e.preventDefault();
-    setCurrentImageIndex((prev) => (prev === 0 ? allImages.length - 1 : prev - 1));
+    setCurrentImageIndex((prev) =>
+      prev === 0 ? allImages.length - 1 : prev - 1,
+    );
   };
 
   const buildWhatsAppLink = (product: Product) => {
     // Generate absolute URL for the product page
-    const productUrl = `${origin || 'https://silvsquaresa.pages.dev'}/catalog/${product.id}`;
-    
+    const productUrl = `${origin || "https://المربع الفضيsa.pages.dev"}/catalog/${product.id}`;
+
     const phoneNumber = getRepNumber(repId);
-    
+
     const message = encodeURIComponent(
-      `${SITE_CONFIG.ui?.whatsapp_message || 'مرحباً، أود الاستفسار عن المنتج التالي:'}\n\n` +
-      `📦 الموديل: ${product.name}\n` +
-      `🏷️ الكود: ${product.id}\n` +
-      `رابط المنتج:\n${productUrl}`
+      `${SITE_CONFIG.ui?.whatsapp_message || "مرحباً، أود الاستفسار عن المنتج التالي:"}\n\n` +
+        `📦 الموديل: ${product.name}\n` +
+        `🏷️ الكود: ${product.id}\n` +
+        `رابط المنتج:\n${productUrl}`,
     );
     return `https://wa.me/${phoneNumber}?text=${message}`;
   };
 
   return (
     <div className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-card-hover transition-all duration-300 border border-sand">
-      <a href={`/catalog/${product.id}`} className="block relative aspect-square overflow-hidden bg-sand group/image">
+      <a
+        href={`/catalog/${product.id}`}
+        className="block relative aspect-square overflow-hidden bg-sand group/image"
+      >
         <img
           src={allImages[currentImageIndex]}
           alt={product.name}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
-        
+
         {allImages.length > 1 && (
           <>
-            <button 
+            <button
               onClick={prevImage}
               className="absolute top-1/2 right-2 -translate-y-1/2 bg-white/80 backdrop-blur text-primary-dark p-1.5 rounded-full shadow-sm opacity-0 group-hover/image:opacity-100 transition-opacity hover:bg-white"
             >
               <ChevronRight className="w-5 h-5" />
             </button>
-            <button 
+            <button
               onClick={nextImage}
               className="absolute top-1/2 left-2 -translate-y-1/2 bg-white/80 backdrop-blur text-primary-dark p-1.5 rounded-full shadow-sm opacity-0 group-hover/image:opacity-100 transition-opacity hover:bg-white"
             >
@@ -84,9 +91,9 @@ export function ProductCard({ product }: ProductCardProps) {
             </button>
             <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 opacity-0 group-hover/image:opacity-100 transition-opacity">
               {allImages.map((_, i) => (
-                <div 
-                  key={i} 
-                  className={`w-1.5 h-1.5 rounded-full transition-colors ${i === currentImageIndex ? 'bg-primary-accent' : 'bg-white/60'}`}
+                <div
+                  key={i}
+                  className={`w-1.5 h-1.5 rounded-full transition-colors ${i === currentImageIndex ? "bg-primary-accent" : "bg-white/60"}`}
                 />
               ))}
             </div>
@@ -99,7 +106,7 @@ export function ProductCard({ product }: ProductCardProps) {
           </div>
         )}
       </a>
-      
+
       <div className="p-5 flex flex-col gap-3">
         <div>
           <span className="text-xs font-medium text-primary-accent mb-1 block">
@@ -111,7 +118,7 @@ export function ProductCard({ product }: ProductCardProps) {
             </h3>
           </a>
         </div>
-        
+
         <p className="text-sm text-muted-text line-clamp-2 min-h-[40px]">
           {product.description}
         </p>
@@ -123,7 +130,7 @@ export function ProductCard({ product }: ProductCardProps) {
             rel="noopener noreferrer"
             className="flex-1 text-center bg-[#25D366] text-white py-2 px-2 rounded-button text-sm font-semibold hover:bg-[#20bd5a] transition-colors whitespace-nowrap"
           >
-            {SITE_CONFIG.ui?.request_product_quote || 'طلب تسعيرة'}
+            {SITE_CONFIG.ui?.request_product_quote || "طلب تسعيرة"}
           </a>
           <a
             href={`/catalog/${product.id}`}
