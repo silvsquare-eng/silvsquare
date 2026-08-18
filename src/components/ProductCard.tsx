@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { ChevronRight, ChevronLeft } from 'lucide-react';
 import { SITE_CONFIG, getRepNumber } from '@/config/site';
 
 export type ProductOptions = Record<string, string[]>;
@@ -24,11 +25,24 @@ interface ProductCardProps {
 export function ProductCard({ product }: ProductCardProps) {
   const [origin, setOrigin] = useState('');
   const [repId, setRepId] = useState<string | null>(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
     setOrigin(window.location.origin);
     setRepId(localStorage.getItem('sales_rep'));
   }, []);
+
+  const allImages = [product.main_image, ...(product.additional_images || [])];
+
+  const nextImage = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setCurrentImageIndex((prev) => (prev === allImages.length - 1 ? 0 : prev + 1));
+  };
+
+  const prevImage = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setCurrentImageIndex((prev) => (prev === 0 ? allImages.length - 1 : prev - 1));
+  };
 
   const buildWhatsAppLink = (product: Product) => {
     // Generate absolute URL for the product page
@@ -47,14 +61,40 @@ export function ProductCard({ product }: ProductCardProps) {
 
   return (
     <div className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-card-hover transition-all duration-300 border border-sand">
-      <a href={`/catalog/${product.id}`} className="block relative aspect-square overflow-hidden bg-sand">
+      <a href={`/catalog/${product.id}`} className="block relative aspect-square overflow-hidden bg-sand group/image">
         <img
-          src={product.main_image}
+          src={allImages[currentImageIndex]}
           alt={product.name}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
+        
+        {allImages.length > 1 && (
+          <>
+            <button 
+              onClick={prevImage}
+              className="absolute top-1/2 right-2 -translate-y-1/2 bg-white/80 backdrop-blur text-primary-dark p-1.5 rounded-full shadow-sm opacity-0 group-hover/image:opacity-100 transition-opacity hover:bg-white"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+            <button 
+              onClick={nextImage}
+              className="absolute top-1/2 left-2 -translate-y-1/2 bg-white/80 backdrop-blur text-primary-dark p-1.5 rounded-full shadow-sm opacity-0 group-hover/image:opacity-100 transition-opacity hover:bg-white"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 opacity-0 group-hover/image:opacity-100 transition-opacity">
+              {allImages.map((_, i) => (
+                <div 
+                  key={i} 
+                  className={`w-1.5 h-1.5 rounded-full transition-colors ${i === currentImageIndex ? 'bg-primary-accent' : 'bg-white/60'}`}
+                />
+              ))}
+            </div>
+          </>
+        )}
+
         {product.model_3d && (
-          <div className="absolute top-3 left-3 bg-white/90 backdrop-blur text-primary-dark text-xs font-bold px-2.5 py-1 rounded-full shadow-sm">
+          <div className="absolute top-3 right-3 bg-white/90 backdrop-blur text-primary-dark text-xs font-bold px-2.5 py-1 rounded-full shadow-sm">
             3D متوفر
           </div>
         )}
