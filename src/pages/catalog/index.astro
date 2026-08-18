@@ -5,5 +5,5 @@ import catalogData from '@/data/catalog.json';
 ---
 
 <Layout title="SilvSquare | كتالوج المنتجات" description="تصفح مجموعة منتجاتنا المتنوعة واطلب مباشرة عبر الواتساب.">
-  <CatalogPage products={catalogData} client:load />
+  <CatalogPage products={catalogData as any} client:load />
 </Layout>

@@ -1,6 +1,18 @@
 import settingsData from '../data/settings.json';
 
-export const SITE_CONFIG = settingsData;
+export interface SiteConfig {
+  brand: any;
+  links: any;
+  hero: any;
+  stats: any[];
+  whatsappMessage: string;
+  seo: any;
+  catalog: any;
+  ui?: Record<string, string>;
+  reps?: Record<string, string>;
+}
+
+export const SITE_CONFIG = settingsData as unknown as SiteConfig;
 
 export const SECTION_IDS = {
   hero: 'hero',
