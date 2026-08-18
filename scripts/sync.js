@@ -77,7 +77,7 @@ async function syncCatalog(csvData, csvDataEn) {
   
   const catalog = records.map(row => {
     const existing = existingCatalog.find(p => p.id === row.id) || {};
-    const enRow = recordsEn.find(p => p.id === row.id) || {};
+    const enRow = recordsEn.find(p => p.id_en === row.id || p.id === row.id) || {};
     
     const options = {};
     const options_en = {};
@@ -108,20 +108,21 @@ async function syncCatalog(csvData, csvDataEn) {
 
     // Process English Row Options (Overrides any _en columns in Arabic sheet)
     for (const key of Object.keys(enRow)) {
-      if (key.toLowerCase().endsWith(' image') || key.startsWith('image_') || key.startsWith('صورة_')) {
+      const cleanKey = key.replace(/_en$/i, ''); // Strip _en suffix for easier matching
+      if (cleanKey.toLowerCase().endsWith(' image') || cleanKey.startsWith('image_') || cleanKey.startsWith('صورة_')) {
         const val = enRow[key] ? enRow[key].trim() : '';
         if (val !== '') {
           // avoid duplicating images in extraImages if they already exist
           if (!extraImages.includes(val)) extraImages.push(val);
           
-          let suffix = key.replace(/^(image_|صورة_)/, '').replace(/ image$/i, '').trim();
+          let suffix = cleanKey.replace(/^(image_|صورة_)/, '').replace(/ image$/i, '').trim();
           if (isNaN(Number(suffix)) && suffix !== '') {
             optionImages[suffix] = val;
           }
         }
-      } else if (!standardFields.includes(key) && key.trim() !== '') {
+      } else if (!standardFields.includes(cleanKey) && cleanKey !== 'id' && key.trim() !== '') {
         const val = enRow[key];
-        options_en[key] = val ? val.split(/[,،]/).map(s => s.trim()).filter(Boolean) : [];
+        options_en[cleanKey] = val ? val.split(/[,،]/).map(s => s.trim()).filter(Boolean) : [];
       }
     }
     
@@ -131,11 +132,11 @@ async function syncCatalog(csvData, csvDataEn) {
     return {
       id: row.id,
       name: row.name,
-      name_en: enRow.name || row.name_en || row.name,
+      name_en: enRow.name_en || enRow.name || row.name_en || row.name,
       category: row.category,
-      category_en: enRow.category || row.category_en || row.category,
+      category_en: enRow.category_en || enRow.category || row.category_en || row.category,
       description: row.description,
-      description_en: enRow.description || row.description_en || row.description,
+      description_en: enRow.description_en || enRow.description || row.description_en || row.description,
       base_price: row.base_price || "",
       main_image: row.main_image,
       model_3d: row.model_3d || undefined,
