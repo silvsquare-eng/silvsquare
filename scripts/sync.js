@@ -73,7 +73,7 @@ async function syncCatalog(csvData, csvDataEn) {
     }
   } catch (e) {}
 
-  const standardFields = ['id', 'name', 'name_en', 'category', 'category_en', 'description', 'description_en', 'base_price', 'main_image', 'model_3d', 'additional_images', 'skus', ...ignoredColumns];
+  const standardFields = ['id', 'name', 'name_en', 'category', 'category_en', 'description', 'description_en', 'base_price', 'main_image', 'model_3d', 'additional_images', 'skus', 'ربط', 'link', ...ignoredColumns];
   
   const catalog = records.map(row => {
     const existing = existingCatalog.find(p => p.id === row.id) || {};
@@ -83,6 +83,7 @@ async function syncCatalog(csvData, csvDataEn) {
     const options_en = {};
     const extraImages = [];
     const optionImages = {};
+    const linkedOptions = {};
     
     // Process Arabic / Default Row
     for (const key of Object.keys(row)) {
@@ -129,6 +130,23 @@ async function syncCatalog(csvData, csvDataEn) {
     let allAdditionalImages = row.additional_images ? row.additional_images.split(',').map(s => s.trim()).filter(Boolean) : [];
     allAdditionalImages = [...allAdditionalImages, ...extraImages];
     
+    // Parse Linked Options
+    const rawLink = row['ربط'] || row['link'] || enRow['link'] || enRow['ربط'];
+    if (rawLink) {
+      const lines = rawLink.split(/[\n|]/);
+      for (const line of lines) {
+        // Split by comma (English or Arabic), colon, or equals sign
+        const parts = line.split(/[,،=:]/);
+        if (parts.length >= 2) {
+          const condition = parts[0].trim();
+          const result = parts[1].trim();
+          if (condition && result) {
+            linkedOptions[condition] = result;
+          }
+        }
+      }
+    }
+    
     return {
       id: row.id,
       name: row.name,
@@ -144,6 +162,7 @@ async function syncCatalog(csvData, csvDataEn) {
       options: options,
       options_en: Object.keys(options_en).length > 0 ? options_en : options,
       option_images: optionImages,
+      linked_options: linkedOptions,
       skus: row.skus ? row.skus.split(',').map(s => s.trim()).filter(Boolean) : (row.id ? [row.id] : []),
       rating: existing.rating || 5.0,
       reviews: existing.reviews || []

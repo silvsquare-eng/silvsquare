@@ -19,6 +19,7 @@ export interface Product {
   options: ProductOptions;
   options_en?: ProductOptions;
   option_images?: Record<string, string>;
+  linked_options?: Record<string, string>;
   skus: string[];
 }
 

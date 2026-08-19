@@ -33,7 +33,27 @@ export function ProductDetailsPage({ product, lang = "ar" }: { product: Detailed
   });
 
   const handleOptionChange = (key: string, value: string) => {
-    setSelectedOptions((prev) => ({ ...prev, [key]: value }));
+    setSelectedOptions((prev) => {
+      const newOptions = { ...prev, [key]: value };
+      
+      // Check for linked options
+      if (product.linked_options) {
+        // If the selected value triggers a linked option
+        if (product.linked_options[value]) {
+          const targetValue = product.linked_options[value];
+          // Find which option key has this target value
+          if (optionsToUse) {
+            Object.entries(optionsToUse).forEach(([optKey, optValues]) => {
+              if (optValues.includes(targetValue)) {
+                newOptions[optKey] = targetValue;
+              }
+            });
+          }
+        }
+      }
+      
+      return newOptions;
+    });
   };
 
   const [show3D, setShow3D] = useState(false);
