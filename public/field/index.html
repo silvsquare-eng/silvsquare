@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#120e0c">
+  <title>المربع الفضي | بوابة المناديب والرادار الميداني</title>
+  <link rel="icon" type="image/jpeg" href="/logo.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="/field/styles.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="container header-inner">
+      <a href="#" class="brand-wrap" onclick="event.preventDefault(); openRepSwitcher();">
+        <img src="/logo.jpg" alt="SilvSquare" class="brand-logo">
+        <div>
+          <div class="brand-name">المربع الفضي</div>
+          <div class="brand-rep-tag" id="header-rep-label">اختر المندوب</div>
+        </div>
+      </a>
+
+      <nav class="desktop-nav" id="desktop-nav" style="display:none;">
+        <button class="nav-tab active" data-view="radar" onclick="switchView('radar')">
+          <i class="fa-solid fa-satellite-dish"></i> الرادار
+        </button>
+        <button class="nav-tab" data-view="leads" onclick="switchView('leads')">
+          <i class="fa-solid fa-store"></i> عملائي (<span id="leads-count-badge">0</span>)
+        </button>
+        <button class="nav-tab" data-view="stats" onclick="switchView('stats')">
+          <i class="fa-solid fa-chart-simple"></i> الإنجاز
+        </button>
+      </nav>
+
+      <div class="header-actions" id="header-actions" style="display:none;">
+        <a id="header-catalog-link" href="https://catalog.silvsquare.com/catalog" target="_blank" class="btn-pill outline-accent">
+          <i class="fa-solid fa-book-open"></i> الكاتالوج
+        </a>
+        <button class="btn-pill" onclick="openRepSwitcher()" title="تبديل المندوب">
+          <i class="fa-solid fa-user-gear"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Rep Gate (Separate screen per rep) -->
+  <section id="rep-gate" class="rep-gate">
+    <div class="rep-gate-box">
+      <h1>بوابة المناديب الميدانية</h1>
+      <p>اختر حسابك لفتح شاشتك المستقلة، رادار منطقتك، ورابط الكاتالوج الخاص فيك.</p>
+      <div class="rep-grid" id="rep-grid"></div>
+    </div>
+  </section>
+
+  <!-- Main Workspace -->
+  <main class="container" id="app-main" style="display:none;">
+
+    <!-- VIEW 1: RADAR -->
+    <section id="view-radar" class="view-section active">
+      <div class="panel">
+        <div class="panel-header">
+          <h2 class="panel-title"><i class="fa-solid fa-satellite-dish"></i> رادار استكشاف المحلات</h2>
+          <span class="badge badge-new" id="radar-region-badge">جاهز للمسح</span>
+        </div>
+
+        <div class="form-grid cols-3">
+          <div>
+            <label class="field-label">المدينة / الحي</label>
+            <select id="radar-district" class="select">
+              <option value="gps">📍 موقعي الحالي (GPS)</option>
+              <optgroup label="خميس مشيط وأبها (عسير)">
+                <option value="خميس مشيط - وسط المدينة">خميس مشيط — وسط المدينة</option>
+                <option value="خميس مشيط - حي الراقي">خميس مشيط — حي الراقي</option>
+                <option value="خميس مشيط - حي شباعة">خميس مشيط — حي شباعة</option>
+                <option value="خميس مشيط - حي حسام">خميس مشيط — حي حسام</option>
+                <option value="خميس مشيط - طريق الملك فهد">خميس مشيط — طريق الملك فهد</option>
+                <option value="خميس مشيط - الخالدية">خميس مشيط — الخالدية</option>
+                <option value="أبها - المحالة">أبها — المحالة</option>
+                <option value="أبها - المنسك">أبها — حي المنسك</option>
+                <option value="أبها - أبها الجديدة">أبها — أبها الجديدة</option>
+              </optgroup>
+              <optgroup label="الخبر والشرقية">
+                <option value="الخبر - العزيزية">الخبر — حي العزيزية</option>
+                <option value="الخبر - العليا">الخبر — حي العليا</option>
+                <option value="الخبر - العقربية">الخبر — حي العقربية</option>
+                <option value="الخبر - الكورنيش">الخبر — الكورنيش</option>
+                <option value="الخبر - الراكة">الخبر — حي الراكة</option>
+                <option value="الخبر - الحزام الذهبي">الخبر — الحزام الذهبي</option>
+                <option value="الظهران - الدوحة">الظهران — الدوحة</option>
+                <option value="الدمام - الشاطئ">الدمام — حي الشاطئ</option>
+              </optgroup>
+            </select>
+          </div>
+
+          <div>
+            <label class="field-label">نطاق البحث</label>
+            <select id="radar-radius" class="select">
+              <option value="1500">1.5 كم</option>
+              <option value="3000" selected>3 كم</option>
+              <option value="5000">5 كم</option>
+              <option value="8000">8 كم</option>
+            </select>
+          </div>
+
+          <div style="display:flex; align-items:flex-end;">
+            <button id="radar-scan-btn" class="btn-primary" onclick="startRadarScan()">
+              <i class="fa-solid fa-radar"></i> ابدأ المسح
+            </button>
+          </div>
+        </div>
+
+        <div class="checks-row">
+          <label class="check-chip"><input type="checkbox" id="chk-cafe" checked> ☕ كافيهات</label>
+          <label class="check-chip"><input type="checkbox" id="chk-food" checked> 🍔 مطاعم</label>
+          <label class="check-chip"><input type="checkbox" id="chk-bakery" checked> 🥐 مخابز وحلويات</label>
+          <button type="button" class="btn-pill" onclick="openGoogleMapsSearch()" style="margin-right:auto;">
+            <i class="fa-solid fa-map-location-dot" style="color:var(--accent);"></i> بحث في خرائط قوقل
+          </button>
+        </div>
+      </div>
+
+      <div id="radar-loading" class="panel radar-scanning" style="display:none;">
+        <div class="radar-ring"></div>
+        <h3 id="radar-loading-text">جاري مسح المنطقة...</h3>
+      </div>
+
+      <div id="radar-error" class="radar-warning" style="display:none;"></div>
+
+      <div id="radar-results-wrap" style="display:none;">
+        <div class="radar-summary">
+          <span>تم اكتشاف <strong id="radar-count">0</strong> مشروع في <strong id="radar-area-label"></strong></span>
+          <button class="btn-pill accent" onclick="addAllRadarToLeads()">
+            <i class="fa-solid fa-plus"></i> حفظ الكل في قائمتي
+          </button>
+        </div>
+        <div class="cards-grid" id="radar-results-grid"></div>
+      </div>
+    </section>
+
+    <!-- VIEW 2: MY LEADS -->
+    <section id="view-leads" class="view-section">
+      <div class="panel">
+        <div class="panel-header">
+          <h2 class="panel-title"><i class="fa-solid fa-store"></i> قائمة العملاء والزيارات</h2>
+          <div style="display:flex; gap:0.4rem; flex-wrap:wrap;">
+            <button class="btn-pill" onclick="navigateToNearestUnvisited()">
+              <i class="fa-solid fa-route" style="color:var(--green);"></i> أقرب عميل لم يُزر
+            </button>
+            <button class="btn-pill" id="toggle-archive-btn" onclick="toggleKhobarArchive()" style="display:none;">
+              <i class="fa-solid fa-database"></i> أرشيف الشرقية (496)
+            </button>
+            <button class="btn-pill accent" onclick="openAddLeadModal()">
+              <i class="fa-solid fa-plus"></i> عميل جديد
+            </button>
+          </div>
+        </div>
+
+        <div class="form-grid cols-2">
+          <input type="text" id="leads-search" class="input" placeholder="ابحث بالاسم، الحي، أو الجوال..." oninput="renderLeads()">
+          <select id="leads-rep-filter" class="select" onchange="renderLeads()" style="display:none;">
+            <option value="all">كل المناديب</option>
+          </select>
+        </div>
+
+        <div class="filter-pills">
+          <button class="f-pill active" data-filter="all" onclick="setLeadFilter('all')">الكل</button>
+          <button class="f-pill" data-filter="unvisited" onclick="setLeadFilter('unvisited')">لم تُزر</button>
+          <button class="f-pill" data-filter="visited" onclick="setLeadFilter('visited')">تمت الزيارة</button>
+          <button class="f-pill" data-filter="revisit" onclick="setLeadFilter('revisit')">إعادة زيارة</button>
+        </div>
+      </div>
+
+      <div class="cards-grid" id="leads-grid"></div>
+    </section>
+
+    <!-- VIEW 3: STATS -->
+    <section id="view-stats" class="view-section">
+      <div class="stats-grid" id="stats-grid"></div>
+      <div class="panel">
+        <div class="panel-header">
+          <h2 class="panel-title"><i class="fa-solid fa-file-export"></i> تصدير وروابط سريعة</h2>
+          <button class="btn-pill accent" onclick="exportRepCSV()">
+            <i class="fa-solid fa-download"></i> تصدير CSV
+          </button>
+        </div>
+        <p style="font-size:0.85rem; color:var(--muted); margin-bottom:0.75rem;">
+          رابطك المباشر لفتح شاشتك مباشرة بدون اختيار المندوب كل مرة:
+        </p>
+        <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+          <input type="text" id="direct-rep-url" class="input" readonly style="flex:1; min-width:220px; direction:ltr;">
+          <button class="btn-pill accent" onclick="copyDirectUrl()">
+            <i class="fa-solid fa-copy"></i> نسخ الرابط
+          </button>
+        </div>
+      </div>
+
+      <div class="panel" id="manager-sync-panel" style="display:none;">
+        <div class="panel-header">
+          <h2 class="panel-title"><i class="fa-solid fa-cloud-arrow-up"></i> مزامنة الإدارة مع قوقل شيت</h2>
+          <button class="btn-pill" onclick="pullManagerCloudVisits()">
+            <i class="fa-solid fa-rotate"></i> تحديث زيارات الفريق
+          </button>
+        </div>
+        <p style="font-size:0.82rem; color:var(--muted); margin-bottom:0.75rem;">
+          ضع رابط Google Apps Script Web App لحفظ زيارات المناديب في الشيت وجلبها هنا لحظياً.
+        </p>
+        <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+          <input type="url" id="webhook-url-input" class="input" placeholder="https://script.google.com/macros/s/.../exec" style="flex:1; min-width:220px; direction:ltr;">
+          <button class="btn-pill accent" onclick="saveWebhookUrl()">حفظ الرابط</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Mobile Bottom Nav -->
+  <nav class="bottom-nav" id="bottom-nav" style="display:none;">
+    <button class="bnav-btn active" data-view="radar" onclick="switchView('radar')">
+      <i class="fa-solid fa-satellite-dish"></i>
+      <span>الرادار</span>
+    </button>
+    <button class="bnav-btn" data-view="leads" onclick="switchView('leads')">
+      <i class="fa-solid fa-store"></i>
+      <span>عملائي</span>
+    </button>
+    <button class="bnav-btn" data-view="stats" onclick="switchView('stats')">
+      <i class="fa-solid fa-chart-simple"></i>
+      <span>الإنجاز</span>
+    </button>
+  </nav>
+
+  <!-- Modal: Log Visit -->
+  <div class="modal-backdrop" id="visit-modal">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h3 id="visit-modal-title">توثيق زيارة</h3>
+        <button class="modal-close" onclick="closeVisitModal()">✕</button>
+      </div>
+      <form onsubmit="saveVisit(event)">
+        <input type="hidden" id="visit-lead-id">
+        <div style="margin-bottom:0.75rem;">
+          <label class="field-label">حالة الزيارة</label>
+          <select id="visit-status" class="select">
+            <option value="has_phone">📞 تم أخذ رقم التواصل</option>
+            <option value="revisit">⏳ مطلوب إعادة زيارة</option>
+            <option value="completed">✅ تم إرسال الكاتالوج / مهتم</option>
+            <option value="rejected">❌ غير مهتم</option>
+          </select>
+        </div>
+        <div style="margin-bottom:0.75rem;">
+          <label class="field-label">رقم الجوال</label>
+          <input type="tel" id="visit-phone" class="input" placeholder="05xxxxxxxx" style="direction:ltr;">
+        </div>
+        <div style="margin-bottom:1rem;">
+          <label class="field-label">ملاحظات</label>
+          <textarea id="visit-notes" class="textarea" rows="3" placeholder="الاحتياج، المقاسات، موعد المتابعة..."></textarea>
+        </div>
+        <button type="submit" class="btn-primary">حفظ الزيارة</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Add Lead -->
+  <div class="modal-backdrop" id="add-lead-modal">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h3>إضافة عميل جديد</h3>
+        <button class="modal-close" onclick="closeAddLeadModal()">✕</button>
+      </div>
+      <form onsubmit="saveNewLead(event)">
+        <div style="margin-bottom:0.75rem;">
+          <label class="field-label">اسم المحل *</label>
+          <input type="text" id="new-lead-name" class="input" required placeholder="مثال: كافيه القمة">
+        </div>
+        <div style="margin-bottom:0.75rem;">
+          <label class="field-label">النشاط</label>
+          <select id="new-lead-cat" class="select">
+            <option value="كافيه">كافيه / قهوة مختصة</option>
+            <option value="مطعم">مطعم / برجر</option>
+            <option value="مخبز وحلويات">مخبز / حلويات</option>
+          </select>
+        </div>
+        <div style="margin-bottom:0.75rem;">
+          <label class="field-label">المدينة والحي *</label>
+          <input type="text" id="new-lead-area" class="input" required placeholder="مثال: خميس مشيط - حي الراقي">
+        </div>
+        <div style="margin-bottom:1rem;">
+          <label class="field-label">رقم الجوال</label>
+          <input type="tel" id="new-lead-phone" class="input" placeholder="05xxxxxxxx" style="direction:ltr;">
+        </div>
+        <button type="submit" class="btn-primary">إضافة للقائمة</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Manager PIN -->
+  <div class="modal-backdrop" id="pin-modal">
+    <div class="modal-card" style="max-width:360px;">
+      <div class="modal-head">
+        <h3>دخول الإدارة</h3>
+        <button class="modal-close" onclick="closePinModal()">✕</button>
+      </div>
+      <form onsubmit="submitManagerPin(event)">
+        <div style="margin-bottom:0.9rem;">
+          <label class="field-label">أدخل رمز PIN للإدارة</label>
+          <input type="password" id="manager-pin-input" class="input" inputmode="numeric" maxlength="8" placeholder="••••" required style="text-align:center; font-size:1.25rem; letter-spacing:0.4rem; direction:ltr;">
+        </div>
+        <button type="submit" class="btn-primary">فتح شاشة الإدارة</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="/field/app.js"></script>
+</body>
+</html>
