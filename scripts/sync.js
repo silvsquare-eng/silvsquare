@@ -28,9 +28,9 @@ async function fetchCSV(url) {
         return resolve(fetchCSV(res.headers.location));
       }
       
-      let data = '';
-      res.on('data', chunk => data += chunk);
-      res.on('end', () => resolve(data));
+      const chunks = [];
+      res.on('data', chunk => chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk)));
+      res.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
     });
     req.setTimeout(30000, () => {
       req.destroy(new Error(`Request timeout for ${url}`));
