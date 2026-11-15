@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Phone, ShieldCheck, FileText } from 'lucide-react';
-import { SITE_CONFIG, getRepNumber, formatDisplayPhone } from '@/config/site';
+import { SITE_CONFIG, getRepNumber } from '@/config/site';
 import { getLenis } from '@/hooks/useLenis';
 
 export function Footer({ lang = 'ar' }: { lang?: 'ar' | 'en' }) {
@@ -56,7 +56,6 @@ export function Footer({ lang = 'ar' }: { lang?: 'ar' | 'en' }) {
   const crLabel = lang === 'en' ? 'Commercial Registration:' : 'السجل التجاري:';
   const taxLabel = lang === 'en' ? 'Tax Number (VAT):' : 'الرقم الضريبي:';
   const currentYear = new Date().getFullYear();
-  const displayPhone = formatDisplayPhone(phoneNumber);
 
   return (
     <footer className="bg-primary-dark text-sand">
@@ -88,13 +87,6 @@ export function Footer({ lang = 'ar' }: { lang?: 'ar' | 'en' }) {
           {/* Contact */}
           <div>
             <h4 className="text-h3 text-secondary-warm mb-4">{contactTitle}</h4>
-            <a
-              href={`tel:+${phoneNumber}`}
-              className="block text-body text-muted-text hover:text-white transition-colors mb-3"
-              dir="ltr"
-            >
-              {displayPhone}
-            </a>
             <a
               href={`https://wa.me/${phoneNumber}`}
               target="_blank"
