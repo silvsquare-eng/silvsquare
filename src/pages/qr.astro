@@ -1,0 +1,508 @@
+---
+import { SITE_CONFIG } from '@/config/site';
+
+const repsFromSettings = SITE_CONFIG.reps || {};
+const defaultSalesTeam = [
+  { id: 'busultan', name: 'فريق المبيعات', role: 'مستشار المبيعات', initial: 'س', phone: '966548008247' },
+  { id: 'buamer', name: 'فريق المبيعات', role: 'مستشار المبيعات', initial: 'ع', phone: '966546101912' },
+  { id: 'buabdullah', name: 'فريق المبيعات', role: 'مستشار المبيعات', initial: 'ع', phone: '966542966582' },
+  { id: 'omar', name: 'فريق المبيعات', role: 'مستشار المبيعات', initial: 'ع', phone: '966599297877' },
+];
+
+const mergedMap = new Map<string, { id: string; name: string; role: string; initial: string; phone: string }>();
+for (const member of defaultSalesTeam) {
+  mergedMap.set(member.id.toLowerCase(), member);
+}
+for (const [rawKey, rawPhone] of Object.entries(repsFromSettings)) {
+  const id = rawKey.trim();
+  const phone = String(rawPhone || '').replace(/\D/g, '');
+  if (!id || !phone || id.toLowerCase() === 'bumohamed') continue;
+  const existing = mergedMap.get(id.toLowerCase());
+  mergedMap.set(id.toLowerCase(), {
+    id,
+    name: existing?.name || 'فريق المبيعات',
+    role: existing?.role || 'مستشار المبيعات',
+    initial: existing?.initial || 'م',
+    phone: phone.startsWith('05') && phone.length === 10 ? `966${phone.slice(1)}` : phone,
+  });
+}
+
+const salesTeam = Array.from(mergedMap.values());
+const managementPhone = String(repsFromSettings['bumohamed'] || '966546602454').replace(/\D/g, '');
+const siteOrigin = Astro.site ? Astro.site.origin : 'https://silvsquaresa.pages.dev';
+---
+
+<!doctype html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>شركة المربع الفضي للتعبئة والتغليف | تواصل سريع</title>
+  <meta name="description" content="صفحة تواصل سريعة لشركة المربع الفضي للتعبئة والتغليف وفريق المبيعات والإدارة." />
+
+  <link rel="icon" href="/logo.jpg" type="image/jpeg" />
+  <link rel="apple-touch-icon" href="/logo.jpg" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content={`${siteOrigin}/qr/`} />
+  <meta property="og:title" content="شركة المربع الفضي للتعبئة والتغليف" />
+  <meta property="og:description" content="صفحة تواصل سريعة لشركة المربع الفضي للتعبئة والتغليف وفريق المبيعات والإدارة." />
+  <meta property="og:image" content={`${siteOrigin}/qr/og-ssilvsquare.png`} />
+  <meta property="og:image:secure_url" content={`${siteOrigin}/qr/og-ssilvsquare.png`} />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="شركة المربع الفضي للتعبئة والتغليف" />
+  <meta name="twitter:description" content="صفحة تواصل سريعة لشركة المربع الفضي للتعبئة والتغليف وفريق المبيعات والإدارة." />
+  <meta name="twitter:image" content={`${siteOrigin}/qr/og-ssilvsquare.png`} />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+      --surface: rgba(255, 255, 255, 0.75);
+      --surface-solid: #ffffff;
+      --text-main: #2d3748;
+      --text-muted: #718096;
+      --primary: #4a5568;
+      --accent: #e2e8f0;
+      --border: rgba(226, 232, 240, 0.8);
+      --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --transition: all 0.3s ease;
+      --max-w: 480px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Tajawal', sans-serif;
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      padding: 20px 16px 100px;
+      display: flex;
+      justify-content: center;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+      transition: var(--transition);
+    }
+
+    .container {
+      width: 100%;
+      max-width: var(--max-w);
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .header-card {
+      background: url('/qr/bk.jpg');
+      background-size: cover;
+      background-position: center;
+      border-radius: var(--radius-lg);
+      padding: 32px 24px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+    }
+
+    .logo-container {
+      width: 100%;
+      max-width: 220px;
+      margin: 0 auto 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-img {
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      border-radius: 12px;
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: #ffffff;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: #ffffff;
+      line-height: 1.6;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 800;
+      margin-bottom: 16px;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title::before {
+      content: "";
+      display: block;
+      width: 4px;
+      height: 16px;
+      background: var(--primary);
+      border-radius: 4px;
+    }
+
+    .card-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .contact-card {
+      background: var(--surface);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+    }
+
+    .contact-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+      background: var(--surface-solid);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .avatar {
+      width: 48px;
+      height: 48px;
+      background: var(--primary);
+      color: white;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .user-info h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .user-info p {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .btn-group {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 8px;
+    }
+
+    .btn {
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-whatsapp {
+      background: #25D366;
+      color: white;
+      box-shadow: 0 4px 12px rgba(37, 211, 102, 0.2);
+    }
+
+    .btn-whatsapp:hover {
+      background: #20bd5a;
+      transform: scale(1.02);
+    }
+
+    .btn-call {
+      background: var(--accent);
+      color: var(--text-main);
+    }
+
+    .btn-call:hover {
+      background: #cbd5e1;
+    }
+
+    .btn-catalog {
+      background: #E86011;
+      color: #ffffff;
+      width: 100%;
+    }
+
+    .btn-catalog:hover {
+      background: #D4550F;
+    }
+
+    .social-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .social-btn {
+      background: var(--surface-solid);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-main);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .social-btn:hover {
+      background: var(--primary);
+      color: white;
+      transform: translateY(-3px);
+    }
+
+    .social-btn svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .sticky-footer {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 32px);
+      max-width: var(--max-w);
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(12px);
+      padding: 12px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      z-index: 100;
+    }
+
+    .sticky-footer .btn {
+      padding: 14px;
+    }
+
+    @media (max-width: 380px) {
+      .social-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .btn-group {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="container">
+    <section class="header-card">
+      <div class="logo-container">
+        <img src="/qr/logo.jpg" alt="شعار شركة المربع الفضي" class="logo-img" />
+      </div>
+      <h1>المربع الفضي للتعبئة والتغليف</h1>
+      <p class="subtitle">حلول طباعة وتغليف ترفع حضور علامتك التجارية. تواصل مباشر وسريع عبر الباركود.</p>
+    </section>
+
+    <section>
+      <a id="catalog-link-btn" href="/catalog" class="btn btn-catalog">تصفح كتالوج المنتجات</a>
+    </section>
+
+    <section>
+      <h2 class="section-title">فريق المبيعات</h2>
+      <div class="card-grid" id="sales-grid">
+        {salesTeam.map((rep) => (
+          <div class="contact-card" data-rep-id={rep.id}>
+            <div class="card-header">
+              <div class="avatar">{rep.initial}</div>
+              <div class="user-info">
+                <h3>{rep.name}</h3>
+                <p>{rep.role}</p>
+              </div>
+            </div>
+            <div class="btn-group">
+              <a href={`https://wa.me/${rep.phone}`} class="btn btn-whatsapp" target="_blank" rel="noopener noreferrer">واتساب</a>
+              <a href={`tel:+${rep.phone}`} class="btn btn-call">اتصال</a>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-title">الإدارة</h2>
+      <div class="contact-card">
+        <div class="card-header">
+          <div class="avatar" style="background: #2d3748;">أ</div>
+          <div class="user-info">
+            <h3>فريق الإدارة</h3>
+            <p>الإدارة العامة</p>
+          </div>
+        </div>
+        <div class="btn-group">
+          <a href={`https://wa.me/${managementPhone}`} class="btn btn-whatsapp" target="_blank" rel="noopener noreferrer">واتساب</a>
+          <a href={`tel:+${managementPhone}`} class="btn btn-call">اتصال</a>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-title">حسابات التواصل</h2>
+      <div class="social-grid">
+        <a class="social-btn" href="/" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+          </svg>
+          <span>الموقع</span>
+        </a>
+
+        <a class="social-btn" href="mailto:silvsquare@gmail.com" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+            <polyline points="22,6 12,13 2,6"></polyline>
+          </svg>
+          <span>البريد</span>
+        </a>
+
+        <a class="social-btn" href="https://maps.app.goo.gl/nsAAD38NCq2RN9oKA" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+            <circle cx="12" cy="10" r="3"></circle>
+          </svg>
+          <span>الخريطة</span>
+        </a>
+
+        <a class="social-btn" href="https://www.instagram.com/silvsquare?igsh=MWt0MGdkOGJvd2R5" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="2" width="20" height="20" rx="5"></rect>
+            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+          </svg>
+          <span>إنستغرام</span>
+        </a>
+
+        <a class="social-btn" href="https://www.facebook.com/silvsquare/" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+          </svg>
+          <span>فيسبوك</span>
+        </a>
+
+        <a class="social-btn" href="https://www.tiktok.com/@silvsquare?_r=1&_t=ZS-97r6PMgDyxM" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12.53.02C13.84 0 15.14.01 16.44 0c.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93v7.2c0 1.61-.6 3.2-1.72 4.31-1.13 1.13-2.73 1.72-4.34 1.73-1.62.01-3.2-.58-4.32-1.7-1.13-1.13-1.72-2.72-1.73-4.33-.01-1.61.58-3.2 1.7-4.32 1.12-1.12 2.7-1.71 4.31-1.72h.18v4.04c-1.35.01-2.45 1.11-2.46 2.46 0 1.35 1.1 2.45 2.45 2.46 1.35 0 2.45-1.1 2.46-2.46V.02z" />
+          </svg>
+          <span>تيك توك</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <div class="sticky-footer">
+    <a href={`https://wa.me/${salesTeam[0]?.phone || managementPhone}`} id="sticky-sales-btn" class="btn btn-whatsapp" target="_blank" rel="noopener noreferrer">المبيعات</a>
+    <a href={`https://wa.me/${managementPhone}`} class="btn btn-call" style="background: var(--text-main); color: white;" target="_blank" rel="noopener noreferrer">الإدارة</a>
+  </div>
+
+  <script is:inline define:vars={{ salesTeam }}>
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var repId = (params.get('rep') || '').trim();
+      if (!repId) return;
+
+      var lower = repId.toLowerCase();
+      var cards = document.querySelectorAll('#sales-grid .contact-card');
+      var matched = null;
+
+      for (var i = 0; i < salesTeam.length; i++) {
+        if (salesTeam[i].id.toLowerCase() === lower) {
+          matched = salesTeam[i];
+          break;
+        }
+      }
+
+      if (matched) {
+        cards.forEach(function (card) {
+          var id = (card.getAttribute('data-rep-id') || '').toLowerCase();
+          if (id !== lower) card.style.display = 'none';
+        });
+        var stickySales = document.getElementById('sticky-sales-btn');
+        if (stickySales) stickySales.href = 'https://wa.me/' + matched.phone;
+      } else {
+        var digits = repId.replace(/\D/g, '');
+        if (digits.length >= 9 && digits.length <= 15) {
+          if (digits.indexOf('05') === 0 && digits.length === 10) digits = '966' + digits.slice(1);
+          cards.forEach(function (card, idx) {
+            if (idx > 0) {
+              card.style.display = 'none';
+            } else {
+              var wa = card.querySelector('.btn-whatsapp');
+              var call = card.querySelector('.btn-call');
+              if (wa) wa.href = 'https://wa.me/' + digits;
+              if (call) call.href = 'tel:+' + digits;
+            }
+          });
+          var stickyBtn = document.getElementById('sticky-sales-btn');
+          if (stickyBtn) stickyBtn.href = 'https://wa.me/' + digits;
+        }
+      }
+
+      localStorage.setItem('sales_rep', repId);
+      var catBtn = document.getElementById('catalog-link-btn');
+      if (catBtn) catBtn.href = '/catalog?rep=' + encodeURIComponent(repId);
+    })();
+  </script>
+</body>
+
+</html>
