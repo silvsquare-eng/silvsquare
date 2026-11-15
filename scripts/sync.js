@@ -12,10 +12,9 @@ const __dirname = path.dirname(__filename);
 // ==========================================
 const CATALOG_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ3nOxONI26mhYcT5JYn4kLPK1ALccqO-eJDYet9DiQ-8n8Ya6uvh_WDXtevzAI3MozD1nv6rH_7LYo/pub?gid=1624564332&single=true&output=csv"; 
 const CATALOG_EN_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ3nOxONI26mhYcT5JYn4kLPK1ALccqO-eJDYet9DiQ-8n8Ya6uvh_WDXtevzAI3MozD1nv6rH_7LYo/pub?gid=2001&single=true&output=csv";
-// ضع هنا رابط CSV المنشور لتبويب الكتالوج الثاني في Google Sheets (ملف -> مشاركة -> النشر على الويب -> اختر التبويب الثاني بصيغة CSV)
-const CATALOG_2_CSV_URL = "رابط_CSV_للكتالوج_الثاني";
-// ضع هنا رابط CSV المنشور لترجمة الكتالوج الثاني بالإنجليزية من Google Sheets (اختياري)
-const CATALOG_2_EN_CSV_URL = "رابط_CSV_للكتالوج_الثاني_انجليزي";
+const CATALOG_2_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ3nOxONI26mhYcT5JYn4kLPK1ALccqO-eJDYet9DiQ-8n8Ya6uvh_WDXtevzAI3MozD1nv6rH_7LYo/pub?gid=2036559212&single=true&output=csv";
+// اختياري: ورقة الكتالوج الثاني تحتوي أصلاً على الأعمدة الإنجليزية (name_en, category_en, description_en) في نفس التبويب
+const CATALOG_2_EN_CSV_URL = "";
 const SETTINGS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ3nOxONI26mhYcT5JYn4kLPK1ALccqO-eJDYet9DiQ-8n8Ya6uvh_WDXtevzAI3MozD1nv6rH_7LYo/pub?gid=2037700393&single=true&output=csv";
 
 async function fetchCSV(url) {
