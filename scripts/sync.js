@@ -22,16 +22,21 @@ async function fetchCSV(url) {
   if (!url || url.includes("رابط_CSV")) return null; // تخطي إذا لم يتم وضع الرابط
   
   return new Promise((resolve, reject) => {
-    https.get(url, (res) => {
+    const req = https.get(url, { agent: false }, (res) => {
       if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
-        // Handle redirect
+        // Drain redirect response body before following redirect
+        res.resume();
         return resolve(fetchCSV(res.headers.location));
       }
       
       let data = '';
       res.on('data', chunk => data += chunk);
       res.on('end', () => resolve(data));
-    }).on('error', err => reject(err));
+    });
+    req.setTimeout(30000, () => {
+      req.destroy(new Error(`Request timeout for ${url}`));
+    });
+    req.on('error', err => reject(err));
   });
 }
 
@@ -303,6 +308,8 @@ async function main() {
     console.log('🎉 اكتمل التحديث!');
   } catch (error) {
     console.error('❌ حدث خطأ أثناء السحب:', error.message);
+  } finally {
+    https.globalAgent.destroy();
   }
 }
 
