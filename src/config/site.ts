@@ -56,8 +56,9 @@ export const getRepFromUrlOrStorage = (): string | null => {
     // Support bare query strings like ?busultan or ?0548008247
     if (!rep && window.location.search.length > 1) {
       for (const [key, val] of params.entries()) {
-        if (!val && key.trim()) {
-          rep = key.trim();
+        const cleanKey = key.trim();
+        if (!val && cleanKey && !['cat', 'catalog', 'type'].includes(cleanKey.toLowerCase())) {
+          rep = cleanKey;
           break;
         }
       }
@@ -78,6 +79,12 @@ export const getRepFromUrlOrStorage = (): string | null => {
 export const getRepNumber = (repId?: string | null): string => {
   const config = SITE_CONFIG as any;
   const resolvedId = (repId && repId.trim()) ? repId.trim() : getRepFromUrlOrStorage();
+  const syncWindowActive = (num: string): string => {
+    if (!repId && typeof window !== 'undefined' && num) {
+      (window as any).__ACTIVE_WA_NUMBER__ = num;
+    }
+    return num;
+  };
 
   if (resolvedId) {
     const lowerId = resolvedId.toLowerCase();
@@ -86,7 +93,7 @@ export const getRepNumber = (repId?: string | null): string => {
     if (config.reps && typeof config.reps === 'object') {
       for (const [key, val] of Object.entries(config.reps)) {
         if (key.trim().toLowerCase() === lowerId && typeof val === 'string' && val.trim()) {
-          return normalizeSaudiPhone(val.trim());
+          return syncWindowActive(normalizeSaudiPhone(val.trim()));
         }
       }
 
@@ -97,7 +104,7 @@ export const getRepNumber = (repId?: string | null): string => {
           if (typeof val === 'string') {
             const normVal = normalizeSaudiPhone(val.trim());
             if (normVal === normalizedInput || normVal.endsWith(normalizedInput)) {
-              return normVal;
+              return syncWindowActive(normVal);
             }
           }
         }
@@ -107,7 +114,14 @@ export const getRepNumber = (repId?: string | null): string => {
     // 3. If the URL parameter itself is a valid phone number, use it directly
     const digitsOnly = resolvedId.replace(/\D/g, '');
     if (digitsOnly.length >= 9 && digitsOnly.length <= 15) {
-      return normalizeSaudiPhone(resolvedId);
+      return syncWindowActive(normalizeSaudiPhone(resolvedId));
+    }
+  }
+
+  if (!repId && typeof window !== 'undefined' && (window as any).__ACTIVE_WA_NUMBER__) {
+    const activeFromWindow = normalizeSaudiPhone(String((window as any).__ACTIVE_WA_NUMBER__));
+    if (activeFromWindow.length >= 9) {
+      return activeFromWindow;
     }
   }
 

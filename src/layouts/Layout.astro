@@ -14,9 +14,14 @@ interface Props {
   structuredData?: Record<string, any>;
 }
 
+const rawSeoTitle = SITE_CONFIG.seo?.title;
+const defaultArTitle = rawSeoTitle
+  ? (rawSeoTitle.includes('المربع الفضي') ? rawSeoTitle : rawSeoTitle.replace(/SilvSquare/gi, 'المربع الفضي'))
+  : "المربع الفضي | تغليف مطاعم وكافيهات — من التصميم إلى باب الفرع";
+
 const { 
   lang = 'ar',
-  title = lang === 'en' ? "Silver Square | Packaging for Restaurants and Cafes" : (SITE_CONFIG.seo?.title || "المربع الفضي | تغليف مطاعم وكافيهات — من التصميم إلى باب الفرع"), 
+  title = lang === 'en' ? "Silver Square | Packaging for Restaurants and Cafes" : defaultArTitle,
   description = lang === 'en' ? "A Saudi factory in Al Khobar specializing in packaging for restaurants and cafes. Design and printing of paper and plastic cups, coffee bags, food boxes, sandwich paper, and stickers. Delivery to all Saudi cities." : (SITE_CONFIG.seo?.description || "مصنع سعودي في الخبر متخصص في تغليف المطاعم والكافيهات. تصميم وطباعة أكواب ورقية وبلاستيكية، أكياس قهوة، بوكسات طعام، ورق ساندوتش، وستيكرات. تسليم لجميع مدن السعودية."),
   ogImage,
   structuredData
@@ -32,15 +37,21 @@ const arUrl = new URL(cleanArPath, siteOrigin).href;
 const enUrl = new URL(cleanEnPath, siteOrigin).href;
 const resolvedOgImage = ogImage ? new URL(ogImage, siteOrigin).href : new URL('/logo.jpg', siteOrigin).href;
 
+const repsMap = SITE_CONFIG.reps || {};
+const defaultWa = SITE_CONFIG.links?.whatsapp || '966542966582';
+
 const orgSchema = {
   "@context": "https://schema.org",
-  "@type": "Organization",
+  "@type": ["Organization", "LocalBusiness"],
   "name": lang === 'en' ? "Silver Square" : "المربع الفضي للتعبئة والتغليف",
-  "alternateName": "SilvSquare",
-  "url": siteOrigin,
+  "legalName": "المربع الفضي للتعبئة والتغليف",
+  "alternateName": ["Silver Square", "SilvSquare", "المربع الفضي", "المربع الفضي للتعبئة والتغليف"],
+  "url": "https://silvsquare.com",
   "logo": new URL('/logo.png', siteOrigin).href,
+  "image": resolvedOgImage,
   "description": description,
   "taxID": "312743558700003",
+  "vatID": "312743558700003",
   "identifier": {
     "@type": "PropertyValue",
     "name": "Commercial Registration",
@@ -49,19 +60,21 @@ const orgSchema = {
   "address": {
     "@type": "PostalAddress",
     "addressLocality": "Al Khobar",
+    "addressRegion": "Eastern Province",
     "addressCountry": "SA"
+  },
+  "areaServed": {
+    "@type": "Country",
+    "name": "Saudi Arabia"
   },
   "contactPoint": {
     "@type": "ContactPoint",
-    "telephone": `+${SITE_CONFIG.links?.whatsapp || '966542966582'}`,
+    "telephone": `+${defaultWa}`,
     "contactType": "sales",
     "areaServed": "SA",
     "availableLanguage": ["Arabic", "English"]
   }
 };
-
-const repsMap = SITE_CONFIG.reps || {};
-const defaultWa = SITE_CONFIG.links?.whatsapp || '966542966582';
 ---
 
 <!doctype html>
@@ -72,13 +85,20 @@ const defaultWa = SITE_CONFIG.links?.whatsapp || '966542966582';
     <title>{title}</title>
     <meta name="description" content={description}>
     <meta name="keywords" content={lang === 'en' ? "restaurant packaging, cafe packaging, paper cups printing, coffee bags, food boxes, sandwich paper, restaurant stickers, Saudi packaging factory, Al Khobar, Silver Square" : "تغليف مطاعم, تغليف كافيهات, طباعة أكواب ورقية, أكياس قهوة, بوكسات طعام, ورق ساندوتش, ستيكرات مطاعم, مصنع تغليف السعودية, الخبر, المربع الفضي"}>
+    <meta name="author" content={lang === 'en' ? "Silver Square Packaging" : "المربع الفضي للتعبئة والتغليف"} />
+    <meta name="publisher" content={lang === 'en' ? "Silver Square Packaging" : "المربع الفضي للتعبئة والتغليف"} />
+    <meta name="application-name" content={lang === 'en' ? "Silver Square" : "المربع الفضي"} />
+    <meta name="apple-mobile-web-app-title" content={lang === 'en' ? "Silver Square" : "المربع الفضي"} />
+    <meta name="theme-color" content="#E86011" />
+    <meta name="geo.region" content="SA-04" />
+    <meta name="geo.placename" content="Al Khobar, Saudi Arabia" />
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href={canonicalUrl} />
     <link rel="alternate" hreflang="ar" href={arUrl} />
     <link rel="alternate" hreflang="en" href={enUrl} />
     <link rel="alternate" hreflang="x-default" href={arUrl} />
 
-    <meta property="og:site_name" content={lang === 'en' ? "Silver Square" : "المربع الفضي"} />
+    <meta property="og:site_name" content={lang === 'en' ? "Silver Square" : "المربع الفضي للتعبئة والتغليف"} />
     <meta property="og:title" content={title}>
     <meta property="og:description" content={description}>
     <meta property="og:type" content="website">
@@ -110,13 +130,20 @@ const defaultWa = SITE_CONFIG.links?.whatsapp || '966542966582';
           return cleaned;
         }
 
+        function emitRepUpdated(num) {
+          try {
+            window.dispatchEvent(new CustomEvent('sales-rep-updated', { detail: { phoneNumber: num } }));
+          } catch (e) {}
+        }
+
         try {
           var params = new URLSearchParams(window.location.search);
           var rep = params.get('rep') || params.get('phone') || params.get('wa') || params.get('num') || params.get('id');
           if (!rep && window.location.search.length > 1) {
             params.forEach(function (val, key) {
-              if (!rep && !val && key && key.trim()) {
-                rep = key.trim();
+              var cleanKey = key ? key.trim() : '';
+              if (!rep && !val && cleanKey && ['cat', 'catalog', 'type'].indexOf(cleanKey.toLowerCase()) === -1) {
+                rep = cleanKey;
               }
             });
           }
@@ -128,7 +155,8 @@ const defaultWa = SITE_CONFIG.links?.whatsapp || '966542966582';
 
           var activeNumber = normalizePhone(defaultWa);
           if (rep && rep.trim()) {
-            var lower = rep.trim().toLowerCase();
+            var trimmedRep = rep.trim();
+            var lower = trimmedRep.toLowerCase();
             var matched = false;
             if (repsMap && typeof repsMap === 'object') {
               Object.keys(repsMap).forEach(function (k) {
@@ -137,37 +165,85 @@ const defaultWa = SITE_CONFIG.links?.whatsapp || '966542966582';
                   matched = true;
                 }
               });
+
+              if (!matched) {
+                var normalizedInput = normalizePhone(trimmedRep);
+                if (normalizedInput.length >= 9) {
+                  Object.keys(repsMap).forEach(function (k) {
+                    if (!matched && repsMap[k]) {
+                      var normVal = normalizePhone(repsMap[k]);
+                      if (normVal === normalizedInput || normVal.slice(-normalizedInput.length) === normalizedInput) {
+                        activeNumber = normVal;
+                        matched = true;
+                      }
+                    }
+                  });
+                }
+              }
             }
             if (!matched) {
-              var digits = rep.replace(/\D/g, '');
+              var digits = trimmedRep.replace(/\D/g, '');
               if (digits.length >= 9 && digits.length <= 15) {
-                activeNumber = normalizePhone(rep);
+                activeNumber = normalizePhone(trimmedRep);
               }
             }
           }
 
           window.__ACTIVE_WA_NUMBER__ = activeNumber;
+          emitRepUpdated(activeNumber);
 
-          function updateAllWhatsAppLinks() {
+          function updateAllContactLinks() {
             var num = window.__ACTIVE_WA_NUMBER__;
             if (!num) return;
-            var anchors = document.querySelectorAll('a[href*="wa.me/"]');
-            anchors.forEach(function (a) {
+
+            var waAnchors = document.querySelectorAll('a[href*="wa.me/"]');
+            waAnchors.forEach(function (a) {
               var href = a.getAttribute('href');
               if (href) {
                 var updated = href.replace(/wa\.me\/[0-9+]+/, 'wa.me/' + num);
                 if (updated !== href) a.setAttribute('href', updated);
               }
             });
+
+            var apiAnchors = document.querySelectorAll('a[href*="api.whatsapp.com/send"]');
+            apiAnchors.forEach(function (a) {
+              var href = a.getAttribute('href');
+              if (href) {
+                try {
+                  var parsed = new URL(href, window.location.origin);
+                  if (parsed.searchParams.get('phone') !== num) {
+                    parsed.searchParams.set('phone', num);
+                    a.setAttribute('href', parsed.toString());
+                  }
+                } catch (err) {
+                  var updatedApi = /([?&])phone=[^&]*/.test(href)
+                    ? href.replace(/([?&])phone=[^&]*/, '$1phone=' + num)
+                    : href + (href.indexOf('?') === -1 ? '?phone=' : '&phone=') + num;
+                  if (updatedApi !== href) a.setAttribute('href', updatedApi);
+                }
+              }
+            });
+
+            var telAnchors = document.querySelectorAll('a[href^="tel:"]');
+            telAnchors.forEach(function (a) {
+              var href = a.getAttribute('href');
+              var targetTel = 'tel:+' + num;
+              if (href && href !== targetTel) {
+                a.setAttribute('href', targetTel);
+              }
+            });
           }
 
           if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', updateAllWhatsAppLinks);
+            document.addEventListener('DOMContentLoaded', function () {
+              updateAllContactLinks();
+              emitRepUpdated(activeNumber);
+            });
           } else {
-            updateAllWhatsAppLinks();
+            updateAllContactLinks();
           }
 
-          var observer = new MutationObserver(updateAllWhatsAppLinks);
+          var observer = new MutationObserver(updateAllContactLinks);
           document.addEventListener('DOMContentLoaded', function () {
             if (document.body) {
               observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['href'] });
