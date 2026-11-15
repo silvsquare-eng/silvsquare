@@ -1,14 +1,14 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { Phone } from 'lucide-react';
-import { SITE_CONFIG, getRepNumber } from '@/config/site';
+import { SITE_CONFIG } from '@/config/site';
+import { useRepNumber } from '@/hooks/useRepNumber';
 
 export function WhatsAppFAB({ lang = 'ar' }: { lang?: 'ar' | 'en' }) {
   const buttonRef = useRef<HTMLAnchorElement>(null);
-  const [phoneNumber, setPhoneNumber] = useState<string>(SITE_CONFIG.links.whatsapp);
+  const phoneNumber = useRepNumber();
 
   useEffect(() => {
-    setPhoneNumber(getRepNumber());
     if (!buttonRef.current) return;
     gsap.to(buttonRef.current, {
       scale: 1.05,

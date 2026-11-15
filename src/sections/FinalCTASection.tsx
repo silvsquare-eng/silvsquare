@@ -1,18 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Phone, Check } from 'lucide-react';
 import { useModal } from '@/hooks/useModal';
-import { SITE_CONFIG, getRepNumber } from '@/config/site';
+import { SITE_CONFIG } from '@/config/site';
+import { useRepNumber } from '@/hooks/useRepNumber';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 
 export function FinalCTASection({ lang = 'ar' }: { lang?: 'ar' | 'en' }) {
   const { openModal } = useModal();
   const { ref, isVisible } = useScrollReveal();
   const [copied, setCopied] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState<string>(SITE_CONFIG.links.whatsapp);
-
-  useEffect(() => {
-    setPhoneNumber(getRepNumber());
-  }, []);
+  const phoneNumber = useRepNumber();
 
   const rawMessage = SITE_CONFIG.whatsappMessage?.replace('لمطعمك', 'لمطعمي') || 'السلام عليكم، أريد تجهيز تغليف كامل لمطعمي';
   const defaultMessage = lang === 'en' ? "Hello, I would like to inquire about packaging services." : rawMessage;

@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { ChevronRight, MessageCircle, Box } from "lucide-react";
 import { Reviews } from "@/components/Reviews";
 import type { Product } from "@/components/ProductCard";
-import { SITE_CONFIG, getRepNumber } from "@/config/site";
+import { SITE_CONFIG } from "@/config/site";
+import { useRepNumber } from "@/hooks/useRepNumber";
 
 declare global {
   namespace JSX {
@@ -60,12 +61,11 @@ export function ProductDetailsPage({ product, lang = "ar" }: { product: Detailed
   const [activeImageIndex, setActiveImageIndex] = useState<number | null>(null);
 
   const [origin, setOrigin] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState<string>(() => SITE_CONFIG.links.whatsapp);
+  const phoneNumber = useRepNumber();
 
   // Load model-viewer only on client-side and set origin
   useEffect(() => {
     setOrigin(window.location.origin);
-    setPhoneNumber(getRepNumber());
     if (typeof window !== "undefined") {
       import("@google/model-viewer").catch(console.error);
     }

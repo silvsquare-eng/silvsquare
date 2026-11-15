@@ -1,14 +1,10 @@
-import { useState, useEffect } from 'react';
 import { Phone, ShieldCheck, FileText } from 'lucide-react';
-import { SITE_CONFIG, getRepNumber } from '@/config/site';
+import { SITE_CONFIG } from '@/config/site';
+import { useRepNumber } from '@/hooks/useRepNumber';
 import { getLenis } from '@/hooks/useLenis';
 
 export function Footer({ lang = 'ar' }: { lang?: 'ar' | 'en' }) {
-  const [phoneNumber, setPhoneNumber] = useState<string>(SITE_CONFIG.links.whatsapp);
-
-  useEffect(() => {
-    setPhoneNumber(getRepNumber());
-  }, []);
+  const phoneNumber = useRepNumber();
 
   const quickLinks = lang === 'en' ? [
     { label: 'Services', target: 'services' },

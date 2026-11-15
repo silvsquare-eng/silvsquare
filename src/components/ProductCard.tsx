@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { ChevronRight, ChevronLeft } from "lucide-react";
-import { SITE_CONFIG, getRepNumber } from "@/config/site";
+import { SITE_CONFIG } from "@/config/site";
+import { useRepNumber } from "@/hooks/useRepNumber";
 
 export type ProductOptions = Record<string, string[]>;
 
@@ -30,12 +31,11 @@ interface ProductCardProps {
 
 export function ProductCard({ product, lang = "ar" }: ProductCardProps) {
   const [origin, setOrigin] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState<string>(() => SITE_CONFIG.links.whatsapp);
+  const phoneNumber = useRepNumber();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
     setOrigin(window.location.origin);
-    setPhoneNumber(getRepNumber());
   }, []);
 
   const allImages = [product.main_image, ...(product.additional_images || [])];
