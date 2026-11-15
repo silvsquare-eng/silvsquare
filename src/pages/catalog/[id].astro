@@ -3,8 +3,10 @@ import Layout from '@/layouts/Layout.astro';
 import { ProductDetailsPage } from '@/components/ProductDetailsPage';
 import catalogData from '@/data/catalog.json';
 import catalog2Data from '@/data/catalog2.json';
+import { buildProductBreadcrumbSchema } from '@/utils/seo';
 
 export async function getStaticPaths() {
+  const catalog2Ids = new Set(catalog2Data.map((p: any) => p?.id).filter(Boolean));
   const seenIds = new Set<string>();
   const allProducts = [...catalogData, ...catalog2Data].filter((product: any) => {
     if (!product?.id || seenIds.has(product.id)) return false;
@@ -14,11 +16,11 @@ export async function getStaticPaths() {
 
   return allProducts.map((product: any) => ({
     params: { id: product.id },
-    props: { product },
+    props: { product, isCatalog2: catalog2Ids.has(product.id) },
   }));
 }
 
-const { product } = Astro.props;
+const { product, isCatalog2 } = Astro.props;
 
 const productSchema = {
   "@context": "https://schema.org",
@@ -32,13 +34,20 @@ const productSchema = {
     "name": "المربع الفضي | Silver Square"
   }
 };
+
+const breadcrumbSchema = buildProductBreadcrumbSchema({
+  lang: 'ar',
+  isCatalog2,
+  productId: product.id,
+  productName: product.name,
+});
 ---
 
 <Layout 
   title={`المربع الفضي | ${product.name}`} 
   description={product.description}
   ogImage={product.main_image}
-  structuredData={productSchema}
+  structuredData={[productSchema, breadcrumbSchema]}
 >
   <ProductDetailsPage product={product} client:load />
 </Layout>

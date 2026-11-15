@@ -3,8 +3,21 @@ import Layout from '@/layouts/Layout.astro';
 import { CatalogPage } from '@/components/CatalogPage';
 import catalogData from '@/data/catalog.json';
 import catalog2Data from '@/data/catalog2.json';
+import { buildCollectionSchema, SITE_URL } from '@/utils/seo';
+
+const pageTitle = 'المربع الفضي للتعبئة والتغليف | كتالوج منتجات المطاعم والكافيهات';
+const pageDescription = 'تصفح كتالوج المربع الفضي الرئيسي للتعبئة والتغليف في السعودية: أكواب ورقية وبلاستيكية، أكياس قهوة، بوكسات طعام، ورق ساندوتش وستيكرات مخصصة للمطاعم والكافيهات.';
+
+const collectionSchema = buildCollectionSchema({
+  name: pageTitle,
+  description: pageDescription,
+  url: `${SITE_URL}/catalog/`,
+  lang: 'ar',
+  products: catalogData,
+  basePath: '/catalog',
+});
 ---
 
-<Layout title="المربع الفضي للتعبئة والتغليف | كتالوج المنتجات" description="تصفح مجموعة منتجات المربع الفضي للتعبئة والتغليف المتنوعة للمطاعم والكافيهات واطلب مباشرة عبر الواتساب.">
+<Layout title={pageTitle} description={pageDescription} structuredData={collectionSchema}>
   <CatalogPage products={catalogData as any} catalog2Products={catalog2Data as any} client:load />
 </Layout>

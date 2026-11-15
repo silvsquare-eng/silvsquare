@@ -3,8 +3,21 @@ import Layout from '@/layouts/Layout.astro';
 import { CatalogPage } from '@/components/CatalogPage';
 import catalogData from '@/data/catalog.json';
 import catalog2Data from '@/data/catalog2.json';
+import { buildCollectionSchema, SITE_URL } from '@/utils/seo';
+
+const pageTitle = 'Silver Square Packaging | Second Catalog — Wholesale & Custom Printing';
+const pageDescription = "Discover Silver Square's second packaging catalog in Al Khobar, Saudi Arabia: an expanded range of custom-printed cups, restaurant food boxes, paper and plastic bags, and wholesale cafe supplies.";
+
+const collectionSchema = buildCollectionSchema({
+  name: pageTitle,
+  description: pageDescription,
+  url: `${SITE_URL}/en/catalog2/`,
+  lang: 'en',
+  products: catalog2Data,
+  basePath: '/en/catalog',
+});
 ---
 
-<Layout lang="en" title="Silver Square | Product Catalog" description="Browse Silver Square's packaging product catalog for restaurants and cafes and order directly via WhatsApp.">
+<Layout lang="en" title={pageTitle} description={pageDescription} structuredData={collectionSchema}>
   <CatalogPage products={catalogData as any} catalog2Products={catalog2Data as any} lang="en" defaultCatalog="2" client:load />
 </Layout>

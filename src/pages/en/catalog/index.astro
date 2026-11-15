@@ -3,8 +3,21 @@ import Layout from '@/layouts/Layout.astro';
 import { CatalogPage } from '@/components/CatalogPage';
 import catalogData from '@/data/catalog.json';
 import catalog2Data from '@/data/catalog2.json';
+import { buildCollectionSchema, SITE_URL } from '@/utils/seo';
+
+const pageTitle = 'Silver Square Packaging | Restaurant & Cafe Product Catalog';
+const pageDescription = "Explore Silver Square's main packaging catalog in Saudi Arabia: custom printed paper and plastic cups, coffee bags, food boxes, sandwich wrap, and stickers for restaurants and cafes.";
+
+const collectionSchema = buildCollectionSchema({
+  name: pageTitle,
+  description: pageDescription,
+  url: `${SITE_URL}/en/catalog/`,
+  lang: 'en',
+  products: catalogData,
+  basePath: '/en/catalog',
+});
 ---
 
-<Layout lang="en" title="Silver Square | Product Catalog" description="Browse Silver Square's packaging product catalog for restaurants and cafes and order directly via WhatsApp.">
+<Layout lang="en" title={pageTitle} description={pageDescription} structuredData={collectionSchema}>
   <CatalogPage products={catalogData as any} catalog2Products={catalog2Data as any} lang="en" client:load />
 </Layout>

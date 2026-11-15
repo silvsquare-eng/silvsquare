@@ -3,8 +3,21 @@ import Layout from '@/layouts/Layout.astro';
 import { CatalogPage } from '@/components/CatalogPage';
 import catalogData from '@/data/catalog.json';
 import catalog2Data from '@/data/catalog2.json';
+import { buildCollectionSchema, SITE_URL } from '@/utils/seo';
+
+const pageTitle = 'المربع الفضي للتعبئة والتغليف | الكتالوج الثاني — حلول التغليف والطباعة بالجملة';
+const pageDescription = 'اكتشف الكتالوج الثاني من المربع الفضي للتعبئة والتغليف في الخبر والسعودية: تشكيلة موسعة من الأكواب المطبوعة، علب وبوكسات المطاعم، الأكياس الورقية والبلاستيكية، ومستلزمات الكافيهات بالجملة.';
+
+const collectionSchema = buildCollectionSchema({
+  name: pageTitle,
+  description: pageDescription,
+  url: `${SITE_URL}/catalog2/`,
+  lang: 'ar',
+  products: catalog2Data,
+  basePath: '/catalog',
+});
 ---
 
-<Layout title="المربع الفضي للتعبئة والتغليف | كتالوج المنتجات" description="تصفح مجموعة منتجات المربع الفضي للتعبئة والتغليف المتنوعة للمطاعم والكافيهات واطلب مباشرة عبر الواتساب.">
+<Layout title={pageTitle} description={pageDescription} structuredData={collectionSchema}>
   <CatalogPage products={catalogData as any} catalog2Products={catalog2Data as any} defaultCatalog="2" client:load />
 </Layout>
