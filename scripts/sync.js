@@ -12,10 +12,14 @@ const __dirname = path.dirname(__filename);
 // ==========================================
 const CATALOG_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ3nOxONI26mhYcT5JYn4kLPK1ALccqO-eJDYet9DiQ-8n8Ya6uvh_WDXtevzAI3MozD1nv6rH_7LYo/pub?gid=1624564332&single=true&output=csv"; 
 const CATALOG_EN_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ3nOxONI26mhYcT5JYn4kLPK1ALccqO-eJDYet9DiQ-8n8Ya6uvh_WDXtevzAI3MozD1nv6rH_7LYo/pub?gid=2001&single=true&output=csv";
+// ضع هنا رابط CSV المنشور لتبويب الكتالوج الثاني في Google Sheets (ملف -> مشاركة -> النشر على الويب -> اختر التبويب الثاني بصيغة CSV)
+const CATALOG_2_CSV_URL = "رابط_CSV_للكتالوج_الثاني";
+// ضع هنا رابط CSV المنشور لترجمة الكتالوج الثاني بالإنجليزية من Google Sheets (اختياري)
+const CATALOG_2_EN_CSV_URL = "رابط_CSV_للكتالوج_الثاني_انجليزي";
 const SETTINGS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ3nOxONI26mhYcT5JYn4kLPK1ALccqO-eJDYet9DiQ-8n8Ya6uvh_WDXtevzAI3MozD1nv6rH_7LYo/pub?gid=2037700393&single=true&output=csv";
 
 async function fetchCSV(url) {
-  if (url.includes("رابط_CSV")) return null; // تخطي إذا لم يتم وضع الرابط
+  if (!url || url.includes("رابط_CSV")) return null; // تخطي إذا لم يتم وضع الرابط
   
   return new Promise((resolve, reject) => {
     https.get(url, (res) => {
@@ -50,34 +54,24 @@ function setNested(obj, pathStr, value) {
   current[keys[keys.length - 1]] = parsedValue;
 }
 
-async function syncCatalog(csvData, csvDataEn) {
-  if (!csvData) return;
-  const records = parse(csvData, { columns: true, skip_empty_lines: true });
-  const recordsEn = csvDataEn ? parse(csvDataEn, { columns: true, skip_empty_lines: true }) : [];
-  
-  // نقوم بتحميل الملف الحالي للحفاظ على التقييمات (Reviews)
-  const existingPath = path.join(__dirname, '../src/data/catalog.json');
-  let existingCatalog = [];
+async function readJsonArray(filePath) {
   try {
-    const existingContent = await fs.readFile(existingPath, 'utf8');
-    existingCatalog = JSON.parse(existingContent);
-  } catch (e) {}
+    const content = await fs.readFile(filePath, 'utf8');
+    const parsed = JSON.parse(content);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (e) {
+    return [];
+  }
+}
 
-  // قراءة الإعدادات لمعرفة الأعمدة المستبعدة (ignored_columns)
-  const settingsPath = path.join(__dirname, '../src/data/settings.json');
-  let ignoredColumns = [];
-  try {
-    const settingsContent = await fs.readFile(settingsPath, 'utf8');
-    const settings = JSON.parse(settingsContent);
-    if (settings.catalog && settings.catalog.ignored_columns) {
-      ignoredColumns = settings.catalog.ignored_columns.split(',').map(s => s.trim()).filter(Boolean);
-    }
-  } catch (e) {}
+function isCatalog2Row(row) {
+  const val = (row['الكتالوج'] ?? row['catalog'] ?? '').toString().trim().toLowerCase();
+  return val === '2' || val === 'private' || val === 'خاص';
+}
 
-  const standardFields = ['id', 'name', 'name_en', 'category', 'category_en', 'description', 'description_en', 'base_price', 'main_image', 'model_3d', 'additional_images', 'skus', 'ربط', 'link', ...ignoredColumns];
-  
-  const catalog = records.map(row => {
-    const existing = existingCatalog.find(p => p.id === row.id) || {};
+function mapRecordsToProducts(records, recordsEn, existingById, standardFields) {
+  return records.map(row => {
+    const existing = existingById.get(row.id) || {};
     const enRow = recordsEn.find(p => p.id_en === row.id || p.id === row.id) || {};
     
     const options = {};
@@ -169,9 +163,91 @@ async function syncCatalog(csvData, csvDataEn) {
       reviews: existing.reviews || []
     };
   });
+}
 
-  await fs.writeFile(existingPath, JSON.stringify(catalog, null, 2));
-  console.log('✅ تم تحديث catalog.json بنجاح!');
+async function syncCatalog(csvData, csvDataEn, csvData2, csvData2En) {
+  if (!csvData && !csvData2) return;
+
+  const catalog1Path = path.join(__dirname, '../src/data/catalog.json');
+  const catalog2Path = path.join(__dirname, '../src/data/catalog2.json');
+
+  // نقوم بتحميل الملفات الحالية للحفاظ على التقييمات (Reviews)
+  const existingCatalog1 = await readJsonArray(catalog1Path);
+  const existingCatalog2 = await readJsonArray(catalog2Path);
+  const existingById = new Map();
+  for (const item of [...existingCatalog1, ...existingCatalog2]) {
+    if (item?.id) existingById.set(item.id, item);
+  }
+
+  // قراءة الإعدادات لمعرفة الأعمدة المستبعدة (ignored_columns)
+  const settingsPath = path.join(__dirname, '../src/data/settings.json');
+  let ignoredColumns = [];
+  try {
+    const settingsContent = await fs.readFile(settingsPath, 'utf8');
+    const settings = JSON.parse(settingsContent);
+    if (settings.catalog && settings.catalog.ignored_columns) {
+      ignoredColumns = settings.catalog.ignored_columns.split(',').map(s => s.trim()).filter(Boolean);
+    }
+  } catch (e) {}
+
+  const standardFields = [
+    'id', 'name', 'name_en', 'category', 'category_en',
+    'description', 'description_en', 'base_price', 'main_image',
+    'model_3d', 'additional_images', 'skus', 'ربط', 'link',
+    'الكتالوج', 'catalog',
+    ...ignoredColumns
+  ];
+
+  let mainIds = new Set();
+  let routedTo2Items = [];
+
+  if (csvData) {
+    const records = parse(csvData, { columns: true, skip_empty_lines: true });
+    const recordsEn = csvDataEn ? parse(csvDataEn, { columns: true, skip_empty_lines: true }) : [];
+
+    const mainRecords = [];
+    const routedTo2Records = [];
+
+    for (const row of records) {
+      if (isCatalog2Row(row)) {
+        routedTo2Records.push(row);
+      } else {
+        mainRecords.push(row);
+        if (row.id) mainIds.add(row.id);
+      }
+    }
+
+    const catalog1 = mapRecordsToProducts(mainRecords, recordsEn, existingById, standardFields);
+    await fs.writeFile(catalog1Path, JSON.stringify(catalog1, null, 2));
+    console.log('✅ تم تحديث catalog.json بنجاح!');
+
+    routedTo2Items = mapRecordsToProducts(routedTo2Records, recordsEn, existingById, standardFields);
+  }
+
+  // مزامنة الكتالوج الثاني (إما من تبويب Google Sheets الثاني أو من عمود الكتالوج)
+  if (csvData2) {
+    const records2 = parse(csvData2, { columns: true, skip_empty_lines: true });
+    const records2En = csvData2En ? parse(csvData2En, { columns: true, skip_empty_lines: true }) : [];
+    const tab2Items = mapRecordsToProducts(records2, records2En, existingById, standardFields);
+
+    const combinedMap = new Map();
+    for (const item of [...tab2Items, ...routedTo2Items]) {
+      if (item?.id) combinedMap.set(item.id, item);
+    }
+    const catalog2 = Array.from(combinedMap.values());
+    await fs.writeFile(catalog2Path, JSON.stringify(catalog2, null, 2));
+    console.log('✅ تم تحديث catalog2.json بنجاح!');
+  } else if (routedTo2Items.length > 0) {
+    const routedIds = new Set(routedTo2Items.map(p => p.id).filter(Boolean));
+    const preservedExisting2 = existingCatalog2.filter(
+      p => p?.id && !mainIds.has(p.id) && !routedIds.has(p.id)
+    );
+    const catalog2 = [...preservedExisting2, ...routedTo2Items];
+    await fs.writeFile(catalog2Path, JSON.stringify(catalog2, null, 2));
+    console.log('✅ تم تحديث catalog2.json بنجاح (توجيه من عمود الكتالوج مع الحفاظ على المنتجات الحالية)!');
+  } else {
+    console.log('⚠️ تم تخطي سحب الكتالوج الثاني (لم يتم وضع رابط CATALOG_2_CSV_URL)، وتم الحفاظ على catalog2.json الحالي.');
+  }
 }
 
 async function syncSettings(csvData) {
@@ -215,8 +291,11 @@ async function main() {
 
     const catalogCsv = await fetchCSV(CATALOG_CSV_URL);
     const catalogEnCsv = await fetchCSV(CATALOG_EN_CSV_URL);
-    if (catalogCsv) {
-      await syncCatalog(catalogCsv, catalogEnCsv);
+    const catalog2Csv = await fetchCSV(CATALOG_2_CSV_URL);
+    const catalog2EnCsv = await fetchCSV(CATALOG_2_EN_CSV_URL);
+
+    if (catalogCsv || catalog2Csv) {
+      await syncCatalog(catalogCsv, catalogEnCsv, catalog2Csv, catalog2EnCsv);
     } else {
       console.log('⚠️ تم تخطي الكتالوج، يرجى وضع رابط CATALOG_CSV_URL في السكريبت.');
     }

@@ -2,8 +2,9 @@
 import Layout from '@/layouts/Layout.astro';
 import { CatalogPage } from '@/components/CatalogPage';
 import catalogData from '@/data/catalog.json';
+import catalog2Data from '@/data/catalog2.json';
 ---
 
 <Layout title="المربع الفضي | كتالوج المنتجات" description="تصفح مجموعة منتجاتنا المتنوعة واطلب مباشرة عبر الواتساب.">
-  <CatalogPage products={catalogData as any} client:load />
+  <CatalogPage products={catalogData as any} catalog2Products={catalog2Data as any} client:load />
 </Layout>

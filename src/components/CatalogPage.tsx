@@ -1,10 +1,22 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
 import { ProductCard } from '@/components/ProductCard';
 import type { Product } from '@/components/ProductCard';
 import { SITE_CONFIG } from '@/config/site';
 
-export function CatalogPage({ products, lang = 'ar' }: { products: Product[], lang?: 'ar' | 'en' }) {
+const ACTIVE_CATALOG_STORAGE_KEY = 'active_catalog';
+
+export function CatalogPage({
+  products,
+  catalog2Products = [],
+  lang = 'ar',
+  defaultCatalog = '1',
+}: {
+  products: Product[];
+  catalog2Products?: Product[];
+  lang?: 'ar' | 'en';
+  defaultCatalog?: '1' | '2';
+}) {
   const t = {
     all: lang === 'en' ? 'All' : 'الكل',
     back: lang === 'en' ? 'Back to Home' : 'العودة للرئيسية',
@@ -12,15 +24,43 @@ export function CatalogPage({ products, lang = 'ar' }: { products: Product[], la
     subtitle: lang === 'en' ? 'Browse our diverse product collection and request a quote directly' : (SITE_CONFIG.ui?.catalog_subtitle || 'تصفح مجموعة منتجاتنا المتنوعة واطلب تسعيرة مباشرة'),
   };
 
+  const [activeCatalog, setActiveCatalog] = useState<'1' | '2'>(defaultCatalog);
   const [selectedCategory, setSelectedCategory] = useState<string>(t.all);
 
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const rawCat = (params.get('cat') || params.get('catalog') || params.get('type') || '').trim().toLowerCase();
+
+      let resolved: '1' | '2' = defaultCatalog;
+      if (rawCat === '1') {
+        resolved = '1';
+        sessionStorage.setItem(ACTIVE_CATALOG_STORAGE_KEY, '1');
+      } else if (rawCat === '2' || defaultCatalog === '2') {
+        resolved = '2';
+        sessionStorage.setItem(ACTIVE_CATALOG_STORAGE_KEY, '2');
+      } else if (sessionStorage.getItem(ACTIVE_CATALOG_STORAGE_KEY) === '2') {
+        resolved = '2';
+      }
+
+      if (resolved !== activeCatalog) {
+        setActiveCatalog(resolved);
+        setSelectedCategory(t.all);
+      }
+    } catch {
+      // Ignore storage/URL errors in restricted browser environments
+    }
+  }, [defaultCatalog]);
+
+  const activeProducts = activeCatalog === '2' ? catalog2Products : products;
+
   // Extract unique categories based on lang
-  const categories = [t.all, ...Array.from(new Set(products.map(p => lang === 'en' ? (p.category_en || p.category) : p.category).filter(Boolean)))];
+  const categories = [t.all, ...Array.from(new Set(activeProducts.map(p => lang === 'en' ? (p.category_en || p.category) : p.category).filter(Boolean)))];
 
   // Filter products
   const filteredProducts = selectedCategory === t.all 
-    ? products 
-    : products.filter(p => (lang === 'en' ? (p.category_en || p.category) : p.category) === selectedCategory);
+    ? activeProducts 
+    : activeProducts.filter(p => (lang === 'en' ? (p.category_en || p.category) : p.category) === selectedCategory);
 
   return (
     <div className="bg-neutral-50 min-h-screen pt-28 pb-20">
@@ -56,7 +96,7 @@ export function CatalogPage({ products, lang = 'ar' }: { products: Product[], la
         {/* Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredProducts.map((product, index) => (
-            <ProductCard key={index} product={product} lang={lang} />
+            <ProductCard key={product.id || index} product={product} lang={lang} />
           ))}
         </div>
 
