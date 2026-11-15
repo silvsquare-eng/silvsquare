@@ -168,15 +168,26 @@
           </select>
         </div>
 
-        <div class="filter-pills">
-          <button class="f-pill active" data-filter="all" onclick="setLeadFilter('all')">الكل</button>
-          <button class="f-pill" data-filter="unvisited" onclick="setLeadFilter('unvisited')">لم تُزر</button>
-          <button class="f-pill" data-filter="visited" onclick="setLeadFilter('visited')">تمت الزيارة</button>
-          <button class="f-pill" data-filter="revisit" onclick="setLeadFilter('revisit')">إعادة زيارة</button>
+        <div class="filter-pills" style="justify-content:space-between; align-items:center;">
+          <div style="display:flex; gap:0.45rem; flex-wrap:wrap;">
+            <button class="f-pill active" data-filter="all" onclick="setLeadFilter('all')">الكل</button>
+            <button class="f-pill" data-filter="unvisited" onclick="setLeadFilter('unvisited')">لم تُزر</button>
+            <button class="f-pill" data-filter="visited" onclick="setLeadFilter('visited')">تمت الزيارة</button>
+            <button class="f-pill" data-filter="revisit" onclick="setLeadFilter('revisit')">إعادة زيارة</button>
+          </div>
+          <div class="view-toggle">
+            <button class="vt-btn active" id="vt-cards" onclick="setLeadsViewMode('cards')" title="عرض بطاقات">
+              <i class="fa-solid fa-grip"></i> بطاقات
+            </button>
+            <button class="vt-btn" id="vt-table" onclick="setLeadsViewMode('table')" title="عرض جدول">
+              <i class="fa-solid fa-table-list"></i> جدول
+            </button>
+          </div>
         </div>
       </div>
 
       <div class="cards-grid" id="leads-grid"></div>
+      <div class="table-wrap" id="leads-table-wrap" style="display:none;"></div>
     </section>
 
     <!-- VIEW 3: STATS -->

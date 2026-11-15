@@ -764,6 +764,18 @@ async function navigateToNearestUnvisited() {
   }
 }
 
+let leadsViewMode = localStorage.getItem('SS_LEADS_VIEW') || 'cards';
+
+function setLeadsViewMode(mode) {
+  leadsViewMode = mode === 'table' ? 'table' : 'cards';
+  localStorage.setItem('SS_LEADS_VIEW', leadsViewMode);
+  const cBtn = document.getElementById('vt-cards');
+  const tBtn = document.getElementById('vt-table');
+  if (cBtn) cBtn.classList.toggle('active', leadsViewMode === 'cards');
+  if (tBtn) tBtn.classList.toggle('active', leadsViewMode === 'table');
+  renderLeads();
+}
+
 function setLeadFilter(filter) {
   currentLeadFilter = filter;
   document.querySelectorAll('.f-pill').forEach(b => b.classList.toggle('active', b.dataset.filter === filter));
@@ -774,6 +786,11 @@ function renderLeads() {
   if (!activeRep) return;
   const all = getVisibleProjects();
   document.getElementById('leads-count-badge').textContent = all.length;
+
+  const cBtn = document.getElementById('vt-cards');
+  const tBtn = document.getElementById('vt-table');
+  if (cBtn) cBtn.classList.toggle('active', leadsViewMode === 'cards');
+  if (tBtn) tBtn.classList.toggle('active', leadsViewMode === 'table');
 
   const q = (document.getElementById('leads-search').value || '').trim().toLowerCase();
   const repFilterVal = document.getElementById('leads-rep-filter').value || 'all';
@@ -792,14 +809,77 @@ function renderLeads() {
   });
 
   const grid = document.getElementById('leads-grid');
+  const tableWrap = document.getElementById('leads-table-wrap');
+
   if (filtered.length === 0) {
+    grid.style.display = 'grid';
+    tableWrap.style.display = 'none';
     grid.innerHTML = `<div class="panel" style="grid-column:1/-1; text-align:center; color:var(--muted); padding:2rem 1rem;">
       لا توجد نتائج مطابقة. استخدم <strong>الرادار</strong> لاكتشاف محلات منطقتك أو أضف عميل جديد.
     </div>`;
     return;
   }
 
-  grid.innerHTML = filtered.slice(0, 80).map(item => {
+  const slice = filtered.slice(0, 150);
+
+  if (leadsViewMode === 'table') {
+    grid.style.display = 'none';
+    tableWrap.style.display = 'block';
+    tableWrap.innerHTML = `
+      <table class="leads-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>اسم المحل</th>
+            <th>النشاط</th>
+            <th>المنطقة</th>
+            <th>الجوال</th>
+            <th>الحالة</th>
+            <th>المندوب</th>
+            <th>الإجراءات</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${slice.map((item, idx) => {
+            const statusBadge = item.visitStatus === 'revisit'
+              ? '<span class="badge badge-revisit">⏳ إعادة زيارة</span>'
+              : item.isVisited
+                ? '<span class="badge badge-visited">✅ تمت</span>'
+                : '<span class="badge badge-new">جديد</span>';
+            const waUrl = buildWhatsAppPitchUrl(item);
+            const mapUrl = item.maps_url || buildMapsUrl(item.name, item.lat, item.lng);
+            return `
+              <tr>
+                <td>${idx + 1}</td>
+                <td>
+                  <strong>${escapeHtml(item.name)}</strong>
+                  ${item.visitNotes ? `<div style="font-size:0.72rem; color:#fbd38d;">📝 ${escapeHtml(item.visitNotes)}</div>` : ''}
+                </td>
+                <td>${escapeHtml(item.category || '')}</td>
+                <td>${escapeHtml(item.area || item.address || '')}</td>
+                <td style="direction:ltr; text-align:right;">${item.phone ? escapeHtml(item.phone) : '—'}</td>
+                <td>${statusBadge}</td>
+                <td>${item.visitedBy ? escapeHtml(item.visitedBy) : '—'}</td>
+                <td>
+                  <div class="tbl-actions">
+                    ${item.phone ? `<a href="tel:${escapeHtml(item.phone)}" class="tbl-btn" title="اتصال"><i class="fa-solid fa-phone"></i></a>` : ''}
+                    ${waUrl ? `<a href="${waUrl}" target="_blank" rel="noopener" class="tbl-btn wa" title="واتساب"><i class="fa-brands fa-whatsapp"></i></a>` : ''}
+                    <a href="${mapUrl}" target="_blank" rel="noopener" class="tbl-btn" title="الموقع"><i class="fa-solid fa-map-pin"></i></a>
+                    <button class="tbl-btn visit" onclick="openVisitModal('${escapeHtml(item.id)}')">زيارة</button>
+                  </div>
+                </td>
+              </tr>
+            `;
+          }).join('')}
+        </tbody>
+      </table>
+    `;
+    return;
+  }
+
+  tableWrap.style.display = 'none';
+  grid.style.display = 'grid';
+  grid.innerHTML = slice.map(item => {
     const statusBadge = item.visitStatus === 'revisit'
       ? '<span class="badge badge-revisit">⏳ إعادة زيارة</span>'
       : item.isVisited
