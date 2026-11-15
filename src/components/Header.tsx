@@ -78,7 +78,8 @@ export function Header({ currentPath = '/', lang = 'ar' }: { currentPath?: strin
     } else {
       newPath = currentPath.replace(/^\/en/, '') || '/';
     }
-    window.location.href = newPath;
+    const search = typeof window !== 'undefined' ? window.location.search : '';
+    window.location.href = `${newPath}${search}`;
   };
 
   return (

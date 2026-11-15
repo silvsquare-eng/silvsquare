@@ -11,6 +11,19 @@ export async function getStaticPaths() {
 }
 
 const { product } = Astro.props;
+
+const productSchema = {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": product.name_en || product.name,
+  "description": product.description_en || product.description,
+  "sku": product.id,
+  "image": [product.main_image, ...(product.additional_images || [])].filter(Boolean),
+  "brand": {
+    "@type": "Brand",
+    "name": "Silver Square"
+  }
+};
 ---
 
 <Layout 
@@ -18,6 +31,7 @@ const { product } = Astro.props;
   title={`Silver Square | ${product.name_en || product.name}`} 
   description={product.description_en || product.description}
   ogImage={product.main_image}
+  structuredData={productSchema}
 >
   <ProductDetailsPage product={product} lang="en" client:load />
 </Layout>

@@ -3,6 +3,7 @@ import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { WhatsAppFAB } from '@/components/WhatsAppFAB';
 import { ContactModal } from '@/components/ContactModal';
+import { SITE_CONFIG } from '@/config/site';
 import '@/index.css';
 
 interface Props {
@@ -10,17 +11,57 @@ interface Props {
   description?: string;
   ogImage?: string;
   lang?: 'ar' | 'en';
+  structuredData?: Record<string, any>;
 }
 
 const { 
   lang = 'ar',
-  title = lang === 'en' ? "Silver Square | Packaging for Restaurants and Cafes" : "المربع الفضي | تغليف مطاعم وكافيهات — من التصميم إلى باب الفرع", 
-  description = lang === 'en' ? "A Saudi factory in Al Khobar specializing in packaging for restaurants and cafes. Design and printing of paper and plastic cups, coffee bags, food boxes, sandwich paper, and stickers. Delivery to all Saudi cities." : "مصنع سعودي في الخبر متخصص في تغليف المطاعم والكافيهات. تصميم وطباعة أكواب ورقية وبلاستيكية، أكياس قهوة، بوكسات طعام، ورق ساندوتش، وستيكرات. تسليم لجميع مدن السعودية.",
-  ogImage
+  title = lang === 'en' ? "Silver Square | Packaging for Restaurants and Cafes" : (SITE_CONFIG.seo?.title || "المربع الفضي | تغليف مطاعم وكافيهات — من التصميم إلى باب الفرع"), 
+  description = lang === 'en' ? "A Saudi factory in Al Khobar specializing in packaging for restaurants and cafes. Design and printing of paper and plastic cups, coffee bags, food boxes, sandwich paper, and stickers. Delivery to all Saudi cities." : (SITE_CONFIG.seo?.description || "مصنع سعودي في الخبر متخصص في تغليف المطاعم والكافيهات. تصميم وطباعة أكواب ورقية وبلاستيكية، أكياس قهوة، بوكسات طعام، ورق ساندوتش، وستيكرات. تسليم لجميع مدن السعودية."),
+  ogImage,
+  structuredData
 } = Astro.props;
 
 const currentPath = Astro.url.pathname;
 const dir = lang === 'en' ? 'ltr' : 'rtl';
+const siteOrigin = Astro.site ? Astro.site.origin : Astro.url.origin;
+const canonicalUrl = new URL(currentPath, siteOrigin).href;
+const cleanArPath = currentPath.replace(/^\/en(\/|$)/, '/');
+const cleanEnPath = `/en${cleanArPath === '/' ? '' : cleanArPath}`;
+const arUrl = new URL(cleanArPath, siteOrigin).href;
+const enUrl = new URL(cleanEnPath, siteOrigin).href;
+const resolvedOgImage = ogImage ? new URL(ogImage, siteOrigin).href : new URL('/logo.jpg', siteOrigin).href;
+
+const orgSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": lang === 'en' ? "Silver Square" : "المربع الفضي للتعبئة والتغليف",
+  "alternateName": "SilvSquare",
+  "url": siteOrigin,
+  "logo": new URL('/logo.png', siteOrigin).href,
+  "description": description,
+  "taxID": "312743558700003",
+  "identifier": {
+    "@type": "PropertyValue",
+    "name": "Commercial Registration",
+    "value": "2051244352"
+  },
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Al Khobar",
+    "addressCountry": "SA"
+  },
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": `+${SITE_CONFIG.links?.whatsapp || '966542966582'}`,
+    "contactType": "sales",
+    "areaServed": "SA",
+    "availableLanguage": ["Arabic", "English"]
+  }
+};
+
+const repsMap = SITE_CONFIG.reps || {};
+const defaultWa = SITE_CONFIG.links?.whatsapp || '966542966582';
 ---
 
 <!doctype html>
@@ -30,17 +71,111 @@ const dir = lang === 'en' ? 'ltr' : 'rtl';
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     <meta name="description" content={description}>
-    <meta name="keywords" content={lang === 'en' ? "restaurant packaging, cafe packaging, paper cups printing, coffee bags, food boxes, sandwich paper, restaurant stickers, Saudi packaging factory, Al Khobar" : "تغليف مطاعم, تغليف كافيهات, طباعة أكواب ورقية, أكياس قهوة, بوكسات طعام, ورق ساندوتش, ستيكرات مطاعم, مصنع تغليف السعودية, الخبر"}>
+    <meta name="keywords" content={lang === 'en' ? "restaurant packaging, cafe packaging, paper cups printing, coffee bags, food boxes, sandwich paper, restaurant stickers, Saudi packaging factory, Al Khobar, Silver Square" : "تغليف مطاعم, تغليف كافيهات, طباعة أكواب ورقية, أكياس قهوة, بوكسات طعام, ورق ساندوتش, ستيكرات مطاعم, مصنع تغليف السعودية, الخبر, المربع الفضي"}>
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="alternate" hreflang="ar" href={arUrl} />
+    <link rel="alternate" hreflang="en" href={enUrl} />
+    <link rel="alternate" hreflang="x-default" href={arUrl} />
+
+    <meta property="og:site_name" content={lang === 'en' ? "Silver Square" : "المربع الفضي"} />
     <meta property="og:title" content={title}>
     <meta property="og:description" content={description}>
     <meta property="og:type" content="website">
-    <meta property="og:url" content={Astro.url.href}>
+    <meta property="og:url" content={canonicalUrl}>
     <meta property="og:locale" content={lang === 'en' ? "en_US" : "ar_SA"}>
-    <meta property="og:image" content={ogImage || new URL('/logo.jpg', Astro.url).href}>
-    <link rel="icon" type="image/jpeg" href="/logo.jpg" />
+    <meta property="og:locale:alternate" content={lang === 'en' ? "ar_SA" : "en_US"}>
+    <meta property="og:image" content={resolvedOgImage}>
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={resolvedOgImage} />
+
+    <link rel="icon" type="image/png" href="/logo.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(orgSchema)} />
+    {structuredData && <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />}
+
+    <script is:inline define:vars={{ repsMap, defaultWa }}>
+      (function () {
+        function normalizePhone(phone) {
+          var cleaned = String(phone || '').replace(/\D/g, '');
+          if (cleaned.indexOf('00') === 0) cleaned = cleaned.substring(2);
+          if (cleaned.indexOf('05') === 0 && cleaned.length === 10) cleaned = '966' + cleaned.substring(1);
+          else if (cleaned.indexOf('5') === 0 && cleaned.length === 9) cleaned = '966' + cleaned;
+          return cleaned;
+        }
+
+        try {
+          var params = new URLSearchParams(window.location.search);
+          var rep = params.get('rep') || params.get('phone') || params.get('wa') || params.get('num') || params.get('id');
+          if (!rep && window.location.search.length > 1) {
+            params.forEach(function (val, key) {
+              if (!rep && !val && key && key.trim()) {
+                rep = key.trim();
+              }
+            });
+          }
+          if (rep && rep.trim()) {
+            localStorage.setItem('sales_rep', rep.trim());
+          } else {
+            rep = localStorage.getItem('sales_rep');
+          }
+
+          var activeNumber = normalizePhone(defaultWa);
+          if (rep && rep.trim()) {
+            var lower = rep.trim().toLowerCase();
+            var matched = false;
+            if (repsMap && typeof repsMap === 'object') {
+              Object.keys(repsMap).forEach(function (k) {
+                if (k.trim().toLowerCase() === lower && repsMap[k]) {
+                  activeNumber = normalizePhone(repsMap[k]);
+                  matched = true;
+                }
+              });
+            }
+            if (!matched) {
+              var digits = rep.replace(/\D/g, '');
+              if (digits.length >= 9 && digits.length <= 15) {
+                activeNumber = normalizePhone(rep);
+              }
+            }
+          }
+
+          window.__ACTIVE_WA_NUMBER__ = activeNumber;
+
+          function updateAllWhatsAppLinks() {
+            var num = window.__ACTIVE_WA_NUMBER__;
+            if (!num) return;
+            var anchors = document.querySelectorAll('a[href*="wa.me/"]');
+            anchors.forEach(function (a) {
+              var href = a.getAttribute('href');
+              if (href) {
+                var updated = href.replace(/wa\.me\/[0-9+]+/, 'wa.me/' + num);
+                if (updated !== href) a.setAttribute('href', updated);
+              }
+            });
+          }
+
+          if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', updateAllWhatsAppLinks);
+          } else {
+            updateAllWhatsAppLinks();
+          }
+
+          var observer = new MutationObserver(updateAllWhatsAppLinks);
+          document.addEventListener('DOMContentLoaded', function () {
+            if (document.body) {
+              observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['href'] });
+            }
+          });
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div class="min-h-[100dvh]" dir={dir}>
@@ -52,13 +187,5 @@ const dir = lang === 'en' ? 'ltr' : 'rtl';
       <WhatsAppFAB lang={lang} client:idle />
       <ContactModal lang={lang} client:load />
     </div>
-    
-    <script is:inline>
-      const params = new URLSearchParams(window.location.search);
-      const rep = params.get('rep');
-      if (rep) {
-        localStorage.setItem('sales_rep', rep);
-      }
-    </script>
   </body>
 </html>

@@ -32,17 +32,18 @@ async function fetchCSV(url) {
 }
 
 function setNested(obj, pathStr, value) {
-  const keys = pathStr.split('.');
+  const keys = pathStr.split('.').map(k => k.trim()).filter(Boolean);
   let current = obj;
   for (let i = 0; i < keys.length - 1; i++) {
     if (!current[keys[i]]) current[keys[i]] = {};
     current = current[keys[i]];
   }
+  const cleanValue = typeof value === 'string' ? value.trim() : value;
   // Try parsing value as JSON if it looks like an array or object
-  let parsedValue = value;
+  let parsedValue = cleanValue;
   try {
-    if (value.startsWith('[') || value.startsWith('{')) {
-      parsedValue = JSON.parse(value);
+    if (typeof cleanValue === 'string' && (cleanValue.startsWith('[') || cleanValue.startsWith('{'))) {
+      parsedValue = JSON.parse(cleanValue);
     }
   } catch (e) {}
   

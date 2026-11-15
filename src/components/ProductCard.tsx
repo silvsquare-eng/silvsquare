@@ -30,12 +30,12 @@ interface ProductCardProps {
 
 export function ProductCard({ product, lang = "ar" }: ProductCardProps) {
   const [origin, setOrigin] = useState("");
-  const [repId, setRepId] = useState<string | null>(null);
+  const [phoneNumber, setPhoneNumber] = useState<string>(() => SITE_CONFIG.links.whatsapp);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
     setOrigin(window.location.origin);
-    setRepId(localStorage.getItem("sales_rep"));
+    setPhoneNumber(getRepNumber());
   }, []);
 
   const allImages = [product.main_image, ...(product.additional_images || [])];
@@ -61,9 +61,7 @@ export function ProductCard({ product, lang = "ar" }: ProductCardProps) {
 
   const buildWhatsAppLink = (product: Product) => {
     // Generate absolute URL for the product page
-    const productUrl = `${origin || "https://silvsquaresa.pages.dev"}${urlPrefix}/catalog/${product.id}`;
-
-    const phoneNumber = getRepNumber(repId);
+    const productUrl = `${origin || "https://silvsquare.com"}${urlPrefix}/catalog/${product.id}`;
 
     const defaultMsg = lang === "en" 
       ? "Hello, I would like to inquire about the following product:"
@@ -97,6 +95,8 @@ export function ProductCard({ product, lang = "ar" }: ProductCardProps) {
         <img
           src={allImages[currentImageIndex]}
           alt={name}
+          loading="lazy"
+          decoding="async"
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
 
@@ -104,6 +104,7 @@ export function ProductCard({ product, lang = "ar" }: ProductCardProps) {
           <>
             <button
               onClick={lang === 'en' ? nextImage : prevImage}
+              aria-label={lang === 'en' ? 'Next image' : 'الصورة السابقة'}
               className={`absolute top-1/2 ${lang === 'en' ? 'right-2' : 'right-2'} -translate-y-1/2 bg-white/80 backdrop-blur text-primary-dark p-1.5 rounded-full shadow-sm opacity-0 group-hover/image:opacity-100 transition-opacity hover:bg-white`}
               style={lang === 'en' ? { right: '0.5rem', left: 'auto' } : {}}
             >
@@ -111,6 +112,7 @@ export function ProductCard({ product, lang = "ar" }: ProductCardProps) {
             </button>
             <button
               onClick={lang === 'en' ? prevImage : nextImage}
+              aria-label={lang === 'en' ? 'Previous image' : 'الصورة التالية'}
               className={`absolute top-1/2 ${lang === 'en' ? 'left-2' : 'left-2'} -translate-y-1/2 bg-white/80 backdrop-blur text-primary-dark p-1.5 rounded-full shadow-sm opacity-0 group-hover/image:opacity-100 transition-opacity hover:bg-white`}
               style={lang === 'en' ? { left: '0.5rem', right: 'auto' } : {}}
             >

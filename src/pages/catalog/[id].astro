@@ -11,12 +11,26 @@ export async function getStaticPaths() {
 }
 
 const { product } = Astro.props;
+
+const productSchema = {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": product.name,
+  "description": product.description,
+  "sku": product.id,
+  "image": [product.main_image, ...(product.additional_images || [])].filter(Boolean),
+  "brand": {
+    "@type": "Brand",
+    "name": "المربع الفضي | Silver Square"
+  }
+};
 ---
 
 <Layout 
   title={`المربع الفضي | ${product.name}`} 
   description={product.description}
   ogImage={product.main_image}
+  structuredData={productSchema}
 >
   <ProductDetailsPage product={product} client:load />
 </Layout>

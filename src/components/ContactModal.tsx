@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { X, CheckCircle } from 'lucide-react';
 import { useModal } from '@/hooks/useModal';
-import { SITE_CONFIG } from '@/config/site';
+import { SITE_CONFIG, getRepNumber } from '@/config/site';
 import gsap from 'gsap';
 
 interface FormData {
@@ -78,7 +78,34 @@ export function ContactModal({ lang = 'ar' }: { lang?: 'ar' | 'en' }) {
     e.preventDefault();
     if (!validate()) return;
 
-    console.log('Form submitted:', formData);
+    const phoneNumber = getRepNumber();
+    const activityLabels: Record<string, string> = lang === 'en'
+      ? { cafe: 'Cafe', fastfood: 'Fast Food', home: 'Home Business', family: 'Family Restaurant', other: 'Other' }
+      : { cafe: 'كافيه', fastfood: 'مطعم وجبات سريعة', home: 'مشروع منزلي', family: 'مطعم عائلي', other: 'أخرى' };
+
+    const msgLines = lang === 'en'
+      ? [
+          'Hello, I would like to request a packaging quote:',
+          `• Business Name: ${formData.restaurantName}`,
+          `• City: ${formData.city}`,
+          `• Branches: ${formData.branches}`,
+          `• Activity Type: ${activityLabels[formData.activityType] || formData.activityType}`,
+          formData.menuLink ? `• Menu Link: ${formData.menuLink}` : '',
+          `• Phone: ${formData.phone}`,
+        ]
+      : [
+          'السلام عليكم، أرغب في طلب تسعيرة تغليف:',
+          `• اسم المطعم/المشروع: ${formData.restaurantName}`,
+          `• المدينة: ${formData.city}`,
+          `• عدد الفروع: ${formData.branches}`,
+          `• نوع النشاط: ${activityLabels[formData.activityType] || formData.activityType}`,
+          formData.menuLink ? `• رابط المنيو: ${formData.menuLink}` : '',
+          `• رقم الجوال: ${formData.phone}`,
+        ];
+
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(msgLines.filter(Boolean).join('\n'))}`;
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+
     setSubmitted(true);
 
     setTimeout(() => {

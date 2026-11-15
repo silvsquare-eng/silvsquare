@@ -1,15 +1,21 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Phone, Check } from 'lucide-react';
 import { useModal } from '@/hooks/useModal';
-import { SITE_CONFIG } from '@/config/site';
+import { SITE_CONFIG, getRepNumber } from '@/config/site';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 
 export function FinalCTASection({ lang = 'ar' }: { lang?: 'ar' | 'en' }) {
   const { openModal } = useModal();
   const { ref, isVisible } = useScrollReveal();
   const [copied, setCopied] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState<string>(SITE_CONFIG.links.whatsapp);
 
-  const defaultMessage = lang === 'en' ? "Hello, I would like to inquire about packaging services." : SITE_CONFIG.whatsappMessage;
+  useEffect(() => {
+    setPhoneNumber(getRepNumber());
+  }, []);
+
+  const rawMessage = SITE_CONFIG.whatsappMessage?.replace('لمطعمك', 'لمطعمي') || 'السلام عليكم، أريد تجهيز تغليف كامل لمطعمي';
+  const defaultMessage = lang === 'en' ? "Hello, I would like to inquire about packaging services." : rawMessage;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(defaultMessage).then(() => {
@@ -64,7 +70,7 @@ export function FinalCTASection({ lang = 'ar' }: { lang?: 'ar' | 'en' }) {
           <p className="text-body text-muted-text mb-4">{t.orContact}</p>
           <div className="flex flex-col sm:flex-row items-center gap-4 justify-center" data-aos="fade-up" data-aos-delay="200">
             <a 
-              href={`https://wa.me/${SITE_CONFIG.links.whatsapp}?text=${encodeURIComponent(defaultMessage)}`}
+              href={`https://wa.me/${phoneNumber}?text=${encodeURIComponent(defaultMessage)}`}
               target="_blank"
               rel="noopener noreferrer"
               className={`inline-flex items-center gap-2 px-7 py-3 bg-success-green text-white rounded-pill font-medium transition-all duration-300 hover:brightness-110 ${lang === 'en' ? 'flex-row-reverse' : ''}`}

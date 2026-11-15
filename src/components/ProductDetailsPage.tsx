@@ -60,12 +60,12 @@ export function ProductDetailsPage({ product, lang = "ar" }: { product: Detailed
   const [activeImageIndex, setActiveImageIndex] = useState<number | null>(null);
 
   const [origin, setOrigin] = useState("");
-  const [repId, setRepId] = useState<string | null>(null);
+  const [phoneNumber, setPhoneNumber] = useState<string>(() => SITE_CONFIG.links.whatsapp);
 
   // Load model-viewer only on client-side and set origin
   useEffect(() => {
     setOrigin(window.location.origin);
-    setRepId(localStorage.getItem("sales_rep"));
+    setPhoneNumber(getRepNumber());
     if (typeof window !== "undefined") {
       import("@google/model-viewer").catch(console.error);
     }
@@ -107,9 +107,8 @@ export function ProductDetailsPage({ product, lang = "ar" }: { product: Detailed
   const urlPrefix = lang === "en" ? "/en" : "";
 
   const buildWhatsAppLink = () => {
-    const productUrl = `${origin || "https://silvsquaresa.pages.dev"}${urlPrefix}/catalog/${product.id}`;
+    const productUrl = `${origin || "https://silvsquare.com"}${urlPrefix}/catalog/${product.id}`;
 
-    const phoneNumber = getRepNumber(repId);
     const imageUrl = getColorImage();
 
     const greeting = lang === "en" 

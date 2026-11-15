@@ -88,7 +88,8 @@ export function HeroSection({ lang = 'ar' }: { lang?: 'ar' | 'en' }) {
         <img
           ref={imgRef}
           src="/assets/hero-bg.jpg"
-          alt=""
+          alt={lang === 'en' ? 'Silver Square restaurant and cafe packaging' : 'تغليف مطاعم وكافيهات المربع الفضي'}
+          fetchPriority="high"
           className="w-full h-full object-cover"
         />
         <div

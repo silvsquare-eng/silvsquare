@@ -164,8 +164,6 @@ export function PackagesSection({ lang = 'ar' }: { lang?: 'ar' | 'en' }) {
                 </button>
                 <a
                   href={`${lang === 'en' ? '/en' : ''}${SITE_CONFIG.links.store}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
                   className="btn-ghost w-full text-sm"
                 >
                   {t.btnCatalog}

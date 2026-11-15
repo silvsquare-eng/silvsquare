@@ -1,12 +1,14 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { Phone } from 'lucide-react';
-import { SITE_CONFIG } from '@/config/site';
+import { SITE_CONFIG, getRepNumber } from '@/config/site';
 
 export function WhatsAppFAB({ lang = 'ar' }: { lang?: 'ar' | 'en' }) {
   const buttonRef = useRef<HTMLAnchorElement>(null);
+  const [phoneNumber, setPhoneNumber] = useState<string>(SITE_CONFIG.links.whatsapp);
 
   useEffect(() => {
+    setPhoneNumber(getRepNumber());
     if (!buttonRef.current) return;
     gsap.to(buttonRef.current, {
       scale: 1.05,
@@ -18,12 +20,13 @@ export function WhatsAppFAB({ lang = 'ar' }: { lang?: 'ar' | 'en' }) {
   }, []);
 
   const ariaLabel = lang === 'en' ? "Contact via WhatsApp" : "تواصل عبر واتساب";
-  const defaultMessage = lang === 'en' ? "Hello, I would like to inquire about packaging services." : SITE_CONFIG.whatsappMessage;
+  const rawMessage = SITE_CONFIG.whatsappMessage?.replace('لمطعمك', 'لمطعمي') || 'السلام عليكم، أريد تجهيز تغليف كامل لمطعمي';
+  const defaultMessage = lang === 'en' ? "Hello, I would like to inquire about packaging services." : rawMessage;
 
   return (
     <a
       ref={buttonRef}
-      href={`https://wa.me/${SITE_CONFIG.links.whatsapp}?text=${encodeURIComponent(defaultMessage)}`}
+      href={`https://wa.me/${phoneNumber}?text=${encodeURIComponent(defaultMessage)}`}
       target="_blank"
       rel="noopener noreferrer"
       className={`fixed bottom-6 ${lang === 'en' ? 'right-6' : 'left-6'} z-[999] w-14 h-14 bg-success-green rounded-full flex items-center justify-center shadow-whatsapp transition-all duration-300 hover:scale-110 hover:shadow-lg`}
