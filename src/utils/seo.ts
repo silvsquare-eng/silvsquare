@@ -1,4 +1,4 @@
-export const SITE_URL = 'https://silvsquare.com';
+export const SITE_URL = 'https://silvsquaresa.pages.dev';
 
 interface SchemaProduct {
   id: string;

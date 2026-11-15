@@ -46,7 +46,8 @@ const orgSchema = {
   "name": lang === 'en' ? "Silver Square" : "المربع الفضي للتعبئة والتغليف",
   "legalName": "المربع الفضي للتعبئة والتغليف",
   "alternateName": ["Silver Square", "SilvSquare", "المربع الفضي", "المربع الفضي للتعبئة والتغليف"],
-  "url": "https://silvsquare.com",
+  "url": siteOrigin,
+  "sameAs": ["https://silvsquare.com"],
   "logo": new URL('/logo.png', siteOrigin).href,
   "image": resolvedOgImage,
   "description": description,
@@ -83,7 +84,25 @@ const orgSchema = {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
-    <meta name="description" content={description}>
+    <meta name="description" content={description} />
+
+    <!-- Open Graph / WhatsApp / Social Preview (kept early in head for link crawlers) -->
+    <meta property="og:site_name" content={lang === 'en' ? "Silver Square" : "المربع الفضي للتعبئة والتغليف"} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:locale" content={lang === 'en' ? "en_US" : "ar_SA"} />
+    <meta property="og:locale:alternate" content={lang === 'en' ? "ar_SA" : "en_US"} />
+    <meta property="og:image" content={resolvedOgImage} />
+    <meta property="og:image:secure_url" content={resolvedOgImage} />
+    <meta property="og:image:alt" content={title} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={resolvedOgImage} />
+
     <meta name="keywords" content={lang === 'en' ? "restaurant packaging, cafe packaging, paper cups printing, coffee bags, food boxes, sandwich paper, restaurant stickers, Saudi packaging factory, Al Khobar, Silver Square" : "تغليف مطاعم, تغليف كافيهات, طباعة أكواب ورقية, أكياس قهوة, بوكسات طعام, ورق ساندوتش, ستيكرات مطاعم, مصنع تغليف السعودية, الخبر, المربع الفضي"}>
     <meta name="author" content={lang === 'en' ? "Silver Square Packaging" : "المربع الفضي للتعبئة والتغليف"} />
     <meta name="publisher" content={lang === 'en' ? "Silver Square Packaging" : "المربع الفضي للتعبئة والتغليف"} />
@@ -97,20 +116,6 @@ const orgSchema = {
     <link rel="alternate" hreflang="ar" href={arUrl} />
     <link rel="alternate" hreflang="en" href={enUrl} />
     <link rel="alternate" hreflang="x-default" href={arUrl} />
-
-    <meta property="og:site_name" content={lang === 'en' ? "Silver Square" : "المربع الفضي للتعبئة والتغليف"} />
-    <meta property="og:title" content={title}>
-    <meta property="og:description" content={description}>
-    <meta property="og:type" content="website">
-    <meta property="og:url" content={canonicalUrl}>
-    <meta property="og:locale" content={lang === 'en' ? "en_US" : "ar_SA"}>
-    <meta property="og:locale:alternate" content={lang === 'en' ? "ar_SA" : "en_US"}>
-    <meta property="og:image" content={resolvedOgImage}>
-
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={resolvedOgImage} />
 
     <link rel="icon" type="image/png" href="/logo.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
