@@ -4,8 +4,6 @@ import { ProductCard } from '@/components/ProductCard';
 import type { Product } from '@/components/ProductCard';
 import { SITE_CONFIG } from '@/config/site';
 
-const ACTIVE_CATALOG_STORAGE_KEY = 'active_catalog';
-
 export function CatalogPage({
   products,
   catalog2Products = [],
@@ -35,11 +33,7 @@ export function CatalogPage({
       let resolved: '1' | '2' = defaultCatalog;
       if (rawCat === '1') {
         resolved = '1';
-        sessionStorage.setItem(ACTIVE_CATALOG_STORAGE_KEY, '1');
       } else if (rawCat === '2' || defaultCatalog === '2') {
-        resolved = '2';
-        sessionStorage.setItem(ACTIVE_CATALOG_STORAGE_KEY, '2');
-      } else if (sessionStorage.getItem(ACTIVE_CATALOG_STORAGE_KEY) === '2') {
         resolved = '2';
       }
 
@@ -48,7 +42,7 @@ export function CatalogPage({
         setSelectedCategory(t.all);
       }
     } catch {
-      // Ignore storage/URL errors in restricted browser environments
+      // Ignore URL errors in restricted browser environments
     }
   }, [defaultCatalog]);
 
