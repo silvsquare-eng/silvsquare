@@ -1,0 +1,28 @@
+key,value,الرابط المرجعي (للمعلومية فقط)
+brand.name,المربع الفضي | Silver Square,
+brand.subtitle,مصنع تغليف سعودي — الخبر,
+brand.footerDescription,مصنع سعودي متخصص في تغليف المطاعم والكافيهات منذ 2019,
+brand.factoryName,مصنع المربع الفضي,
+brand.city,مدينة الخبر,
+brand.country,المملكة العربية السعودية,
+reps.busultan,966548008247,https://silvsquare.com/?rep=busultan
+reps.buamer,966546101912,https://silvsquare.com/?rep=buamer
+reps.buabdullah,966542966582,https://silvsquare.com/?rep=buabdullah
+reps.bumohamed,966546602454,https://silvsquare.com/?rep=bumohamed
+links.store,/catalog,https://silvsquare.com/catalog
+links.catalog2,/catalog2,https://silvsquare.com/catalog2
+links.catalog2_en,/en/catalog2,https://silvsquare.com/en/catalog2
+links.catalog2_query,/catalog?cat=2,https://silvsquare.com/catalog?cat=2
+links.whatsapp,966542966582,
+links.phone,546602454,
+hero.deliveryTime,10–14 يوم عمل,
+hero.benefits,"[""تغليف موحد لكل الفروع"",""طباعة كاملة بشعار مطعمك"",""تسليم خلال 10–14 يوم عمل""]",
+stats,"[{""value"":180,""suffix"":""+"",""label"":""مطعم وكافيه يثقون بنا""},{""value"":12000,""suffix"":""+"",""label"":""شحنة منفذة خلال سنة""},{""value"":25,""suffix"":"""",""label"":""مدينة نخدمها داخل السعودية""},{""value"":85,""suffix"":""%"",""label"":""من العملاء يعيدون الطلب""}]",
+whatsappMessage,السلام عليكم، أريد تجهيز تغليف كامل لمطعمي,
+seo.title,المربع الفضي | تغليف مطاعم وكافيهات — من التصميم إلى باب الفرع,
+seo.description,مصنع سعودي في الخبر متخصص في تغليف المطاعم والكافيهات. تصميم وطباعة أكواب ورقية وبلاستيكية، أكياس قهوة، بوكسات طعام، ورق ساندوتش، وستيكرات. تسليم لجميع مدن السعودية.,
+ui.request_quote,طلب تسعيرة,
+ui.home,الرئيسية,
+ui.catalog,المنتجات,
+ui.footer_rights,جميع الحقوق محفوظة,
+catalog.ignored_columns,,
